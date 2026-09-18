@@ -54,6 +54,10 @@ Rules:
 - The root `__init__.py` needs ComfyUI to import. `tests/root_dir_plugin.py` (loaded via `-p root_dir_plugin` in `pyproject.toml`) stops pytest from importing it. Don't remove it.
 - `uv run pytest` and `ruff` must pass before committing. CI runs both.
 
+## Tasks
+
+`TODO.md` lists all pending tasks. Remove a task from it once it's done, in the same change.
+
 ## Docs
 
 Update these in the same change:
