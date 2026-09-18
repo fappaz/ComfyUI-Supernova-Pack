@@ -234,10 +234,10 @@ def test_example_round_trip():
 
 def test_example_all_params():
     out = edit_abc_score(
-        EXAMPLE, tempo=140, default_note_length="1/8", keyscale="Am", semitone_offset=0, time_signature="4/4"
+        EXAMPLE, tempo=140, default_note_length="1/8", keyscale="Am", semitone_offset=0, time_signature="3/4"
     )
     lines = out.splitlines()
-    assert lines[2:5] == ["M:4/4", "L:1/8", "Q:1/4=140"]
+    assert lines[2:5] == ["M:3/4", "L:1/8", "Q:1/4=140"]
     assert "K:Am" in lines
     assert '"Am7"z4|"Am7"z4|"Am7"z4|"Am7"z4|' in lines
     assert "BGBG|BGBG|BGBG|BGBG|" in lines

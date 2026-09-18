@@ -9,66 +9,32 @@ import logging
 import re
 from dataclasses import dataclass, replace
 from fractions import Fraction
-from functools import lru_cache
+
+from .abc_notation import (
+    ACCIDENTAL_TEXT,
+    ACCIDENTALS,
+    C_MAJOR,
+    CHORD_RE,
+    FIELD_RE,
+    METER_RE,
+    TOKEN_RE,
+    Interval,
+    Key,
+    default_unit,
+    format_length,
+    interval_to,
+    parse_key,
+    parse_length,
+    parse_unit,
+    playable,
+    signature,
+    spell_key,
+    transpose,
+    transpose_key,
+)
+from .abc_rebar import rebar
 
 logger = logging.getLogger(__name__)
-
-LETTERS = "CDEFGAB"
-NATURAL = {"C": 0, "D": 2, "E": 4, "F": 5, "G": 7, "A": 9, "B": 11}
-LETTER_FIFTHS = {"F": -1, "C": 0, "G": 1, "D": 2, "A": 3, "E": 4, "B": 5}
-SHARP_ORDER = "FCGDAEB"
-# Mode -> offset in the circle of fifths relative to major, keyed by the first 3 letters of the mode name.
-MODE_FIFTHS = {"maj": 0, "ion": 0, "mix": -1, "dor": -2, "min": -3, "aeo": -3, "m": -3, "phr": -4, "loc": -5, "lyd": 1}
-ACCIDENTALS = {"__": -2, "_": -1, "=": 0, "^": 1, "^^": 2}
-ACCIDENTAL_TEXT = {v: k for k, v in ACCIDENTALS.items()}
-
-_LEN = r"\d*(?:/+\d*)?"
-FIELD_RE = re.compile(r"^([A-Za-z]):(.*)$")
-KEY_RE = re.compile(r"^\s*([A-G])([#b]?)\s*((?i:(?:maj|min|ion|dor|phr|lyd|mix|aeo|loc)[a-z]*|m(?![a-z])))?")
-CHORD_RE = re.compile(r"^([A-G])(##|bb|#|b)?(.*?)(?:/([A-G])(##|bb|#|b)?)?$")
-METER_RE = re.compile(r"^(C\|?|none|\d+(?:\+\d+)*/\d+)$")
-UNIT_RE = re.compile(r"^\s*(\d+)\s*/\s*(\d+)\s*$")
-TOKEN_RE = re.compile(
-    rf"""
-    (?P<comment>%.*)
-    |(?P<symbol>"[^"]*")
-    |(?P<deco>![^!]*!|\+[^+\s]*\+)
-    |(?P<field>\[[A-Za-z]:[^\]]*\])
-    |(?P<bar>\[\||\[\d|:*\|[|\]]*:*\d*|::+)
-    |(?P<tuplet>\(\d+(?::\d*){{0,2}})
-    |(?P<note>(?P<acc>\^\^|\^|__|_|=)?(?P<letter>[A-Ga-g])(?P<octave>[',]*)(?P<len>{_LEN}))
-    |(?P<rest>[zx])(?P<rlen>{_LEN})
-    """,
-    re.X,
-)
-
-
-@dataclass(frozen=True)
-class Key:
-    letter: str
-    alter: int
-    mode_fifths: int = 0
-
-    @property
-    def fifths(self) -> int:
-        return LETTER_FIFTHS[self.letter] + 7 * self.alter + self.mode_fifths
-
-    @property
-    def pitch_class(self) -> int:
-        return (NATURAL[self.letter] + self.alter) % 12
-
-    @property
-    def tonic(self) -> str:
-        return self.letter + ("#" * self.alter if self.alter > 0 else "b" * -self.alter)
-
-
-C_MAJOR = Key("C", 0)
-
-
-@dataclass(frozen=True)
-class Interval:
-    steps: int  # letter (diatonic) steps
-    semitones: int
 
 
 @dataclass
@@ -76,106 +42,6 @@ class _Voice:
     src_key: Key | None
     out_key: Key | None
     unit: Fraction
-
-
-@lru_cache
-def signature(key: Key | None) -> dict[str, int]:
-    """Accidental applied to each letter by the key signature."""
-    sig = dict.fromkeys(LETTERS, 0)
-    fifths = key.fifths if key else 0
-    for i in range(abs(fifths)):
-        if fifths > 0:
-            sig[SHARP_ORDER[i % 7]] += 1
-        else:
-            sig[SHARP_ORDER[6 - i % 7]] -= 1
-    return sig
-
-
-def parse_key(text: str) -> tuple[Key, re.Match] | None:
-    """Parse the tonic and mode at the start of a K: value. None for K:none, K:HP, etc."""
-    m = KEY_RE.match(text)
-    if not m:
-        return None
-    mode = (m.group(3) or "maj").lower()
-    mode_fifths = MODE_FIFTHS["m" if mode == "m" else mode[:3]]
-    return Key(m.group(1), {"#": 1, "b": -1}.get(m.group(2), 0), mode_fifths), m
-
-
-def spell_key(pitch_class: int, mode_fifths: int) -> Key:
-    """The spelling of a tonic with the fewest accidentals in its key signature (flats on ties)."""
-    candidates = []
-    for letter in LETTERS:
-        alter = (pitch_class - NATURAL[letter] + 6) % 12 - 6
-        if abs(alter) <= 1:
-            key = Key(letter, alter, mode_fifths)
-            candidates.append((abs(key.fifths), key.fifths > 0, key))
-    return min(candidates, key=lambda c: c[:2])[2]
-
-
-def _playable(key: Key) -> Key:
-    return key if abs(key.fifths) <= 7 else spell_key(key.pitch_class, key.mode_fifths)
-
-
-def interval_to(src: Key, dst_letter: str, semitones: int) -> Interval:
-    d = (LETTERS.index(dst_letter) - LETTERS.index(src.letter)) % 7
-    return Interval(d + 7 * round((semitones * 7 / 12 - d) / 7), semitones)
-
-
-def transpose(letter: str, octave: int, alter: int, iv: Interval, simple: bool = False) -> tuple[str, int, int]:
-    """Transpose a pitch by an interval, keeping diatonic spelling where possible.
-
-    simple: prefer the spelling with the fewest accidentals (for chord symbols).
-    """
-    max_alter = 1 if simple else 2
-    midi = octave * 12 + NATURAL[letter] + alter + iv.semitones
-    dia = octave * 7 + LETTERS.index(letter) + iv.steps
-    options = []
-    for shift in (0, -1, 1, -2, 2):
-        d = dia + shift
-        a = midi - (d // 7 * 12 + NATURAL[LETTERS[d % 7]])
-        if abs(a) <= max_alter:
-            rank = (abs(a), shift != 0) if simple else (shift != 0, abs(a))
-            options.append((*rank, LETTERS[d % 7], d // 7, a))
-    return min(options)[2:]
-
-
-def transpose_key(key: Key, iv: Interval) -> Key:
-    letter, _, alter = transpose(key.letter, 0, key.alter, iv)
-    return _playable(Key(letter, alter, key.mode_fifths))
-
-
-def parse_length(text: str) -> Fraction:
-    m = re.fullmatch(r"(\d*)(/*)(\d*)", text)
-    num = int(m.group(1) or 1)
-    slashes = len(m.group(2))
-    if not slashes:
-        return Fraction(num)
-    return Fraction(num, int(m.group(3)) if m.group(3) else 2**slashes)
-
-
-def format_length(value: Fraction) -> str:
-    n, d = value.numerator, value.denominator
-    if d == 1:
-        return "" if n == 1 else str(n)
-    return ("" if n == 1 else str(n)) + ("/" if d == 2 else f"/{d}")
-
-
-def parse_unit(text: str) -> Fraction:
-    m = UNIT_RE.match(text)
-    if not m or int(m.group(1)) == 0 or int(m.group(2)) == 0:
-        raise ValueError(f"Invalid note length {text!r}, expected e.g. 1/8")
-    return Fraction(int(m.group(1)), int(m.group(2)))
-
-
-def default_unit(meter: str | None) -> Fraction:
-    """ABC's default L: when the tune has none: 1/16 if the meter is below 3/4, else 1/8."""
-    meter = (meter or "").strip()
-    meter = {"C": "4/4", "C|": "2/2"}.get(meter, meter)
-    m = re.match(r"^([\d+]+)\s*/\s*(\d+)", meter)
-    if not m:
-        return Fraction(1, 8)
-    value = Fraction(sum(int(n) for n in m.group(1).split("+") if n), int(m.group(2)))
-    return Fraction(1, 16) if value < Fraction(3, 4) else Fraction(1, 8)
 
 
 def _set_tempo(value: str, bpm: int) -> str:
@@ -222,12 +88,22 @@ class _Editor:
 
     def run(self, text: str) -> str:
         out: list[str] = []
+        tune: list[str] = []
         for line in text.splitlines(keepends=True):
             content = line.rstrip("\r\n")
-            out.extend(self._line(content, line[len(content) :] or "\n"))
+            if content.startswith("X:"):
+                out.extend(self._finish(tune))
+                tune = []
+            tune.extend(self._line(content, line[len(content) :] or "\n"))
+        out.extend(self._finish(tune))
         if out and not text.endswith(("\n", "\r")):
             out[-1] = out[-1].rstrip("\r\n")
         return "".join(out)
+
+    def _finish(self, tune: list[str]) -> list[str]:
+        if self.meter and not self.in_header:
+            return rebar(tune, self.orig_meter, self.meter)
+        return tune
 
     def _line(self, content: str, nl: str) -> list[str]:
         field = FIELD_RE.match(content)
@@ -299,7 +175,7 @@ class _Editor:
             target, mode_given = self.target
             if mode_given and target.mode_fifths != base.mode_fifths:
                 logger.warning("keyscale %s: mode ignored, keeping the score's mode", target.tonic)
-            dst = _playable(Key(target.letter, target.alter, base.mode_fifths))
+            dst = playable(Key(target.letter, target.alter, base.mode_fifths))
             semitones = (dst.pitch_class - base.pitch_class + 5) % 12 - 5
         if self.offset:
             semitones += self.offset

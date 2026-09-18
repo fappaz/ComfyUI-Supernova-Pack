@@ -33,8 +33,10 @@ class SupernovaEditABCScore(io.ComfyNode):
                 io.String.Input(
                     "keyscale",
                     default="",
-                    tooltip="New key, e.g. C, Am, F#. Transposes all notes and chord symbols to the "
-                    "nearest octave. The score's mode (major/minor) is kept. Empty = unchanged.",
+                    tooltip="New key tonic: C, D, Eb, F#, Bb... Transposes all notes and chord symbols to the "
+                    "nearest octave (at most 6 semitones). The score keeps its own mode: D on a C minor score "
+                    "gives D minor. Mode suffixes (m, min, maj, dor, phr, lyd, mix, aeo, loc) and chord "
+                    "suffixes (7, maj7) are accepted but don't change the mode. Empty = unchanged.",
                 ),
                 io.Int.Input(
                     "semitone_offset",
@@ -47,7 +49,9 @@ class SupernovaEditABCScore(io.ComfyNode):
                 io.String.Input(
                     "time_signature",
                     default="",
-                    tooltip="New header M: field, e.g. 4/4, 3/4, 6/8. Bar lines are not moved. Empty = unchanged.",
+                    tooltip="New header M: field, e.g. 4/4, 3/4, 6/8, C. When the new bar is a whole multiple "
+                    "or divisor of the old one (2/4 <-> 4/4, 3/8 <-> 6/8), bars are merged or split. Otherwise, "
+                    "or if a note would cross a new bar line, only the header changes. Empty = unchanged.",
                 ),
             ],
             outputs=[
