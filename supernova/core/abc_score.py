@@ -7,17 +7,21 @@ from __future__ import annotations
 
 import logging
 import re
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from fractions import Fraction
 
-from .abc_chords import CHORD_STYLES, style_chord
+from .abc_chords import CHORD_STYLES, degree_spelling, remap_quality, style_chord
 from .abc_notation import (
     ACCIDENTAL_TEXT,
     ACCIDENTALS,
     C_MAJOR,
     CHORD_RE,
     FIELD_RE,
+    LETTERS,
     METER_RE,
+    MODE_TEXT,
+    MODES,
+    NATURAL,
     TOKEN_RE,
     Interval,
     Key,
@@ -31,11 +35,13 @@ from .abc_notation import (
     signature,
     spell_key,
     transpose,
-    transpose_key,
 )
 from .abc_rebar import rebar
 
 logger = logging.getLogger(__name__)
+
+
+NO_DELTA = dict.fromkeys(LETTERS, 0)
 
 
 @dataclass
@@ -43,6 +49,14 @@ class _Voice:
     src_key: Key | None
     out_key: Key | None
     unit: Fraction
+    pre_key: Key | None = None  # out_key before the mode change
+    delta: dict[str, int] = field(default_factory=lambda: NO_DELTA)  # mode change per output letter
+
+
+def mode_delta(before: Key, after: Key) -> dict[str, int]:
+    """How much each letter moves when the key signature changes from one mode to another."""
+    old, new = signature(before), signature(after)
+    return {letter: new[letter] - old[letter] for letter in LETTERS}
 
 
 def _set_tempo(value: str, bpm: int) -> str:
@@ -54,8 +68,11 @@ def _set_tempo(value: str, bpm: int) -> str:
 
 
 class _Editor:
-    def __init__(self, tempo: int, unit: Fraction | None, keyscale: str, offset: int, meter: str, chord_style: str):
+    def __init__(
+        self, tempo: int, unit: Fraction | None, keyscale: str, mode: str, offset: int, meter: str, chord_style: str
+    ):
         self.tempo = tempo
+        self.mode = MODES.get(mode)  # None = keep
         self.tgt_unit = unit
         self.offset = offset
         self.meter = meter
@@ -172,19 +189,23 @@ class _Editor:
     def _plan(self, src: Key | None):
         """Work out the transposition from the tune's first key."""
         base = src or C_MAJOR
+        mode = base.mode_fifths if self.mode is None else self.mode
         dst, semitones = base, 0
         if self.target:
             target, mode_given = self.target
-            if mode_given and target.mode_fifths != base.mode_fifths:
-                logger.warning("keyscale %s: mode ignored, keeping the score's mode", target.tonic)
-            dst = playable(Key(target.letter, target.alter, base.mode_fifths))
+            if mode_given and target.mode_fifths != mode:
+                logger.warning("keyscale %s: mode ignored, use the mode input to change it", target.tonic)
+            dst = Key(target.letter, target.alter, mode)
             semitones = (dst.pitch_class - base.pitch_class + 5) % 12 - 5
         if self.offset:
             semitones += self.offset
-            dst = spell_key((dst.pitch_class + self.offset) % 12, base.mode_fifths)
-        if self.target or self.offset:
+            dst = spell_key((dst.pitch_class + self.offset) % 12, mode)
+        dst = playable(Key(dst.letter, dst.alter, mode))
+        if self.target or self.offset or mode != base.mode_fifths:
             self.iv = interval_to(base, dst.letter, semitones)
-        out = dst if (src or self.target) else None
+            self.default.pre_key = Key(dst.letter, dst.alter, base.mode_fifths)
+            self.default.delta = mode_delta(self.default.pre_key, dst)
+        out = dst if (src or self.target or self.mode is not None) else None
         self.default.src_key, self.default.out_key = src, out if self.iv else src
 
     def _key(self, value: str, header: bool) -> str:
@@ -195,15 +216,24 @@ class _Editor:
             out = self.default.out_key
         else:
             voice = self._voice()
-            out = transpose_key(src, self.iv) if (src and self.iv) else src
+            out = src
+            if src and self.iv:
+                letter, _, alter = transpose(src.letter, 0, src.alter, self.iv)
+                voice.pre_key = Key(letter, alter, src.mode_fifths)
+                target = Key(letter, alter, src.mode_fifths if self.mode is None else self.mode)
+                voice.delta = mode_delta(voice.pre_key, target)
+                out = playable(target)
             voice.src_key, voice.out_key = src, out
             self._reset_bar()
         if not self.iv or out is None:
             return value
-        if parsed is None:  # K:none etc. with an explicit keyscale
-            return out.tonic
+        mode_text = "" if self.mode is None else MODE_TEXT[out.mode_fifths]
+        if parsed is None:  # K:none etc. with an explicit keyscale or mode
+            return out.tonic + mode_text
         m = parsed[1]
-        return value[: m.start(1)] + out.tonic + value[m.end(2) :]
+        if self.mode is None:
+            return value[: m.start(1)] + out.tonic + value[m.end(2) :]
+        return value[: m.start(1)] + out.tonic + mode_text + value[m.end(3) if m.group(3) else m.end(2) :]
 
     # --- music ---
 
@@ -250,6 +280,9 @@ class _Editor:
             else:
                 alter = self.src_bar.get((upper, octave), signature(voice.src_key)[upper])
             new, new_octave, new_alter = transpose(upper, octave, alter, self.iv)
+            # Notes in the scale keep their degree; chromatic notes keep their pitch.
+            if voice.delta[new] and new_alter == signature(voice.pre_key)[new]:
+                new, new_octave, new_alter = transpose(new, new_octave, new_alter + voice.delta[new], Interval(0, 0))
             expected = self.out_bar.get((new, new_octave), signature(voice.out_key)[new])
             new_acc = ""
             if new_alter != expected:
@@ -264,17 +297,31 @@ class _Editor:
     def _chord_symbol(self, symbol: str) -> str:
         text = symbol[1:-1]
         m = CHORD_RE.match(text)
+        voice = self._voice()
+        mode_change = any(voice.delta.values())
         if self.iv and m:
 
-            def move(letter: str, acc: str | None) -> str:
+            def move(letter: str, acc: str | None) -> tuple[str, int, int]:
+                """Transpose, then apply the mode change. Returns (name, old pitch class, new pitch class)."""
                 alter = {"#": 1, "##": 2, "b": -1, "bb": -2}.get(acc or "", 0)
-                new, _, new_alter = transpose(letter, 0, alter, self.iv, simple=True)
-                return Key(new, new_alter).tonic
+                new, _, new_alter = transpose(letter, 0, alter, self.iv)
+                old_pc = (NATURAL[new] + new_alter) % 12
+                # By pitch, not letter: chord symbols are often spelled loosely (G# for Ab).
+                spelled = degree_spelling(old_pc, voice.pre_key, voice.out_key) if mode_change else None
+                if spelled:
+                    new, new_alter = spelled
+                if abs(new_alter) > 1 or not mode_change:
+                    new, _, new_alter = transpose(new, 0, new_alter, Interval(0, 0), simple=True)
+                return Key(new, new_alter).tonic, old_pc, (NATURAL[new] + new_alter) % 12
 
-            text = move(m.group(1), m.group(2)) + m.group(3)
+            root, old_pc, new_pc = move(m.group(1), m.group(2))
+            suffix = m.group(3)
+            if mode_change:
+                suffix = remap_quality(suffix, old_pc, new_pc, voice.pre_key, voice.out_key)
+            text = root + suffix
             if m.group(4):
-                text += "/" + move(m.group(4), m.group(5))
-        styled = style_chord(text, self._voice().out_key, self.chord_style)
+                text += "/" + move(m.group(4), m.group(5))[0]
+        styled = style_chord(text, voice.out_key, self.chord_style)
         return "" if styled is None else f'"{styled}"'
 
 
@@ -283,6 +330,7 @@ def edit_abc_score(
     tempo: int = 0,
     default_note_length: str = "",
     keyscale: str = "",
+    mode: str = "keep",
     semitone_offset: int = 0,
     time_signature: str = "",
     chord_style: str = "keep",
@@ -293,6 +341,8 @@ def edit_abc_score(
     - default_note_length: new L:; note durations are rescaled so the rhythm is unchanged.
     - keyscale: new tonic; the score's mode is kept and all notes and chord symbols are
       transposed by the nearest interval (-5..+6 semitones).
+    - mode: new mode (ionian ... locrian) on the same tonic; notes keep their scale degree and
+      diatonic chords change quality. "keep" = unchanged.
     - semitone_offset: extra transposition applied after keyscale.
     - time_signature: new header M:. Bars are merged / split when the new bar length is a
       whole multiple or divisor of the old one, otherwise only the header changes.
@@ -305,9 +355,11 @@ def edit_abc_score(
         raise ValueError(f"Invalid tempo {tempo}, expected a positive bpm")
     if time_signature and not METER_RE.match(time_signature):
         raise ValueError(f"Invalid time signature {time_signature!r}, expected e.g. 4/4, 6/8, C")
+    if mode != "keep" and mode not in MODES:
+        raise ValueError(f"Invalid mode {mode!r}, expected keep or one of {', '.join(MODES)}")
     if chord_style not in CHORD_STYLES:
         raise ValueError(f"Invalid chord style {chord_style!r}, expected one of {', '.join(CHORD_STYLES)}")
     unit = parse_unit(default_note_length) if default_note_length else None
-    if not (tempo or unit or keyscale or semitone_offset or time_signature or chord_style != "keep"):
+    if not (tempo or unit or keyscale or mode != "keep" or semitone_offset or time_signature or chord_style != "keep"):
         return abc_score
-    return _Editor(tempo, unit, keyscale, semitone_offset, time_signature, chord_style).run(abc_score)
+    return _Editor(tempo, unit, keyscale, mode, semitone_offset, time_signature, chord_style).run(abc_score)

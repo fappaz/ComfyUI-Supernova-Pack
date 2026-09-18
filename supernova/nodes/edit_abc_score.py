@@ -1,6 +1,7 @@
 from comfy_api.latest import io
 
 from ..core.abc_chords import CHORD_STYLES
+from ..core.abc_notation import MODES
 from ..core.abc_score import edit_abc_score
 
 
@@ -11,9 +12,9 @@ class SupernovaEditABCScore(io.ComfyNode):
             node_id="SupernovaEditABCScore",
             display_name="Edit ABC Score (Supernova)",
             category="Supernova/music",
-            search_aliases=["abc notation", "transpose", "tempo", "key", "chords", "sheet music"],
+            search_aliases=["abc notation", "transpose", "tempo", "key", "mode", "chords", "sheet music"],
             description=(
-                "Edits an ABC notation score: tempo, default note length, key, time signature and chord style. "
+                "Edits an ABC notation score: tempo, default note length, key, mode, time signature and chord style. "
                 "Empty / 0 parameters leave that part unchanged."
             ),
             inputs=[
@@ -37,7 +38,17 @@ class SupernovaEditABCScore(io.ComfyNode):
                     tooltip="New key tonic: C, D, Eb, F#, Bb... Transposes all notes and chord symbols to the "
                     "nearest octave (at most 6 semitones). The score keeps its own mode: D on a C minor score "
                     "gives D minor. Mode suffixes (m, min, maj, dor, phr, lyd, mix, aeo, loc) and chord "
-                    "suffixes (7, maj7) are accepted but don't change the mode. Empty = unchanged.",
+                    "suffixes (7, maj7) are accepted but don't change the mode; use the mode input for that. "
+                    "Empty = unchanged.",
+                ),
+                io.Combo.Input(
+                    "mode",
+                    options=["keep", *MODES],
+                    default="keep",
+                    tooltip="Change the mode, keeping the tonic. ionian = major, aeolian = natural minor; dorian, "
+                    "phrygian, lydian, mixolydian and locrian are in between. Each note keeps its scale degree "
+                    "(C minor -> C major turns every Eb, Ab and Bb into E, A and B); notes outside the scale keep "
+                    "their pitch. Chords in the key change quality (Fm7 -> Fmaj7). keep = unchanged.",
                 ),
                 io.Int.Input(
                     "semitone_offset",
@@ -76,6 +87,7 @@ class SupernovaEditABCScore(io.ComfyNode):
         tempo: int,
         default_note_length: str,
         keyscale: str,
+        mode: str,
         semitone_offset: int,
         time_signature: str,
         chord_style: str,
@@ -86,6 +98,7 @@ class SupernovaEditABCScore(io.ComfyNode):
                 tempo=tempo,
                 default_note_length=default_note_length,
                 keyscale=keyscale,
+                mode=mode,
                 semitone_offset=semitone_offset,
                 time_signature=time_signature,
                 chord_style=chord_style,

@@ -13,6 +13,9 @@ LETTER_FIFTHS = {"F": -1, "C": 0, "G": 1, "D": 2, "A": 3, "E": 4, "B": 5}
 SHARP_ORDER = "FCGDAEB"
 # Mode -> offset in the circle of fifths relative to major, keyed by the first 3 letters of the mode name.
 MODE_FIFTHS = {"maj": 0, "ion": 0, "mix": -1, "dor": -2, "min": -3, "aeo": -3, "m": -3, "phr": -4, "loc": -5, "lyd": 1}
+# Modes in scale-degree order, as circle-of-fifths offset from major.
+MODES = {"ionian": 0, "dorian": -2, "phrygian": -4, "lydian": 1, "mixolydian": -1, "aeolian": -3, "locrian": -5}
+MODE_TEXT = {0: "", -2: " dor", -4: " phr", 1: " lyd", -1: " mix", -3: "m", -5: " loc"}
 ACCIDENTALS = {"__": -2, "_": -1, "=": 0, "^": 1, "^^": 2}
 ACCIDENTAL_TEXT = {v: k for k, v in ACCIDENTALS.items()}
 

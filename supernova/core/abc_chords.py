@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from .abc_notation import CHORD_RE, NATURAL, Key
+from .abc_notation import CHORD_RE, LETTERS, NATURAL, Key
 
 CHORD_STYLES = ("keep", "triads", "sevenths", "ninths", "sixths", "sus2", "sus4", "power", "no_bass", "remove")
 
@@ -61,6 +61,38 @@ def triad_quality(suffix: str) -> str | None:
     if s == "" or re.match(r"^(\d|add)", s) and s != "5":
         return "maj"
     return None
+
+
+def degree_spelling(pitch_class: int, old_key: Key | None, new_key: Key | None) -> tuple[str, int] | None:
+    """The same scale degree in another key, spelled from that key: Ab in C minor -> A in C major.
+    None when the pitch isn't in old_key's scale."""
+    old = scale(old_key)
+    if pitch_class not in old:
+        return None
+    degree = old.index(pitch_class)
+    letter = LETTERS[(LETTERS.index(new_key.letter if new_key else "C") + degree) % 7]
+    return letter, (scale(new_key)[degree] - NATURAL[letter] + 6) % 12 - 6
+
+
+TRIAD_FORMS = {"maj": ("", "maj", "M"), "min": ("m", "min", "-"), "dim": ("dim", "°", "o"), "aug": ("aug", "+")}
+
+
+def remap_quality(suffix: str, old_root: int, new_root: int, old_key: Key | None, new_key: Key | None) -> str:
+    """Chord suffix after a mode change: diatonic chords take the new key's quality (Fm in C minor -> F
+    in C major), at the same extension (triad, 7th or 9th). Other chords keep their suffix.
+    """
+    quality = triad_quality(suffix)
+    old = diatonic_chord(old_root, old_key)
+    new = diatonic_chord(new_root, new_key)
+    if quality is None or old is None or new is None or old[0] != quality:
+        return suffix
+    if suffix == old[1]:
+        return new[1]
+    if suffix == old[2]:
+        return new[2]
+    if suffix in TRIAD_FORMS[quality]:
+        return TRIAD_SUFFIX[new[0]]
+    return suffix
 
 
 def style_chord(text: str, key: Key | None, style: str) -> str | None:
