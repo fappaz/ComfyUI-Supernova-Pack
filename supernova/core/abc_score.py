@@ -59,6 +59,14 @@ def mode_delta(before: Key, after: Key) -> dict[str, int]:
     return {letter: new[letter] - old[letter] for letter in LETTERS}
 
 
+def _score_unit(value: str) -> Fraction | None:
+    try:
+        return parse_unit(value)
+    except ValueError:
+        logger.warning("L:%s in the score is invalid, ignored", value.strip())
+        return None
+
+
 def _set_tempo(value: str, bpm: int) -> str:
     if re.search(r"=\s*\d+", value):
         return re.sub(r"(=\s*)\d+", rf"\g<1>{bpm}", value, count=1)
@@ -79,9 +87,7 @@ class _Editor:
         self.chord_style = chord_style
         self.target: tuple[Key, bool] | None = None
         if keyscale:
-            parsed = parse_key(keyscale[0].upper() + keyscale[1:])
-            if not parsed:
-                raise ValueError(f"Invalid keyscale {keyscale!r}, expected e.g. C, Am, F#")
+            parsed = _parse_keyscale(keyscale)
             self.target = (parsed[0], parsed[1].group(3) is not None)
         self._reset_tune()
 
@@ -150,7 +156,7 @@ class _Editor:
             if self.meter:
                 value = self.meter
         elif name == "L":
-            self.header_unit = parse_unit(value)
+            self.header_unit = _score_unit(value)
             if self.tgt_unit:
                 value = str(self.tgt_unit)
         elif name == "Q" and self.tempo:
@@ -179,7 +185,7 @@ class _Editor:
         if name == "K":
             return "K:" + self._key(value, header=False)
         if name == "L":
-            self._voice().unit = parse_unit(value)
+            self._voice().unit = _score_unit(value) or self._voice().unit
             return f"L:{self.tgt_unit}" if self.tgt_unit else f"L:{value}"
         if name == "V":
             self.voice_id = value.split()[0] if value.split() else None
@@ -347,19 +353,64 @@ def edit_abc_score(
     - time_signature: new header M:. Bars are merged / split when the new bar length is a
       whole multiple or divisor of the old one, otherwise only the header changes.
     - chord_style: restyle chord symbols, one of CHORD_STYLES ("keep" = unchanged).
+
+    Invalid arguments are ignored with a logged warning.
     """
     keyscale = keyscale.strip()
     default_note_length = default_note_length.strip()
     time_signature = time_signature.strip()
     if tempo < 0:
-        raise ValueError(f"Invalid tempo {tempo}, expected a positive bpm")
+        tempo = _ignore("tempo", tempo, "a positive bpm", 0)
     if time_signature and not METER_RE.match(time_signature):
-        raise ValueError(f"Invalid time signature {time_signature!r}, expected e.g. 4/4, 6/8, C")
+        time_signature = _ignore("time_signature", time_signature, "e.g. 4/4, 6/8, C", "")
+    if keyscale and not _parse_keyscale(keyscale):
+        keyscale = _ignore("keyscale", keyscale, "e.g. C, Eb, F#", "")
     if mode != "keep" and mode not in MODES:
-        raise ValueError(f"Invalid mode {mode!r}, expected keep or one of {', '.join(MODES)}")
+        mode = _ignore("mode", mode, f"keep or one of {', '.join(MODES)}", "keep")
     if chord_style not in CHORD_STYLES:
-        raise ValueError(f"Invalid chord style {chord_style!r}, expected one of {', '.join(CHORD_STYLES)}")
-    unit = parse_unit(default_note_length) if default_note_length else None
+        chord_style = _ignore("chord_style", chord_style, f"one of {', '.join(CHORD_STYLES)}", "keep")
+    unit = None
+    if default_note_length:
+        try:
+            unit = parse_unit(default_note_length)
+        except ValueError:
+            _ignore("default_note_length", default_note_length, "e.g. 1/8, 1/16", None)
     if not (tempo or unit or keyscale or mode != "keep" or semitone_offset or time_signature or chord_style != "keep"):
         return abc_score
     return _Editor(tempo, unit, keyscale, mode, semitone_offset, time_signature, chord_style).run(abc_score)
+
+
+def _parse_keyscale(keyscale: str):
+    return parse_key(keyscale[0].upper() + keyscale[1:])
+
+
+def _ignore(name: str, value, expected: str, default):
+    logger.warning("%s %r is invalid (expected %s), ignored", name, value, expected)
+    return default
+
+
+class _Collect(logging.Handler):
+    def __init__(self):
+        super().__init__()
+        self.messages: list[str] = []
+
+    def emit(self, record: logging.LogRecord):
+        self.messages.append(record.getMessage())
+
+
+# Parent logger of all modules in this package, whatever name ComfyUI loads it under.
+_PACKAGE_LOGGER = logging.getLogger(__name__.rpartition(".")[0])
+
+
+def edit_abc_score_with_warnings(abc_score: str, **kwargs) -> tuple[str, list[str]]:
+    """Like edit_abc_score, but never raises. Returns (score, warnings); on an unexpected error the
+    score is returned unchanged and the error is logged."""
+    handler = _Collect()
+    _PACKAGE_LOGGER.addHandler(handler)
+    try:
+        return edit_abc_score(abc_score, **kwargs), handler.messages
+    except Exception as e:
+        logger.exception("Edit ABC Score failed, score returned unchanged: %s", e)
+        return abc_score, handler.messages
+    finally:
+        _PACKAGE_LOGGER.removeHandler(handler)

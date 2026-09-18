@@ -76,12 +76,14 @@ def rebar(lines: list[str], old_meter: str | None, new_meter: str) -> list[str]:
         return lines
     ratio = new / old
     if ratio.numerator != 1 and ratio.denominator != 1:
-        logger.info("time_signature: %s -> %s changes the header only", old_meter, new_meter)
+        logger.warning(
+            "time_signature %s -> %s: bars can't be regrouped, only the header changed", old_meter, new_meter
+        )
         return lines
     numerator = int(old_meter.split("/")[0]) if old_meter and old_meter.split("/")[0].isdigit() else 0
     try:
         return _Rebar(old, new, compound=numerator > 3 and numerator % 3 == 0, meter=old_meter).run(lines)
-    except RebarError as e:
+    except (RebarError, ValueError) as e:
         logger.warning("time_signature: header changed but bars kept, %s", e)
         return lines
 

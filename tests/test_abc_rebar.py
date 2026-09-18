@@ -99,4 +99,4 @@ def test_uneven_meter_change_is_header_only(caplog):
     with caplog.at_level(logging.INFO):
         out = edit_abc_score(EXAMPLE, time_signature="3/4")
     assert out == EXAMPLE.replace("M:2/4", "M:3/4")
-    assert "header only" in caplog.text
+    assert "only the header changed" in caplog.text

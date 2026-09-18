@@ -138,11 +138,6 @@ def test_remove_chords_keeps_annotations():
     assert edit_abc_score(abc, chord_style="remove").splitlines()[-1] == '"^Intro"c A|'
 
 
-def test_invalid_chord_style_raises():
-    with pytest.raises(ValueError, match="chord style"):
-        edit_abc_score(EXAMPLE, chord_style="jazzy")
-
-
 def test_all_styles_run_on_example():
     for style in CHORD_STYLES:
         edit_abc_score(EXAMPLE, chord_style=style)

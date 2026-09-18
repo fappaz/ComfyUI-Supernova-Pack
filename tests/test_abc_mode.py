@@ -136,11 +136,6 @@ def test_keyscale_mode_warns(caplog):
     assert "use the mode input" in caplog.text
 
 
-def test_invalid_mode_raises():
-    with pytest.raises(ValueError, match="mode"):
-        edit_abc_score(EXAMPLE, mode="major")
-
-
 # --- chords ---
 
 

@@ -73,11 +73,6 @@ def test_note_length_inserted_when_missing_uses_abc_default():
     assert body_of(out) == "c|"
 
 
-def test_invalid_note_length_raises():
-    with pytest.raises(ValueError, match="note length"):
-        edit_abc_score(EXAMPLE, default_note_length="eighth")
-
-
 # --- time signature ---
 
 
@@ -97,11 +92,6 @@ def test_time_signature_pins_implicit_note_length():
 @pytest.mark.parametrize("meter", ["4/4", "6/8", "C", "C|", "2+3/8", "none"])
 def test_time_signature_accepts_valid(meter):
     assert header_field(edit_abc_score(tune("C4|"), time_signature=meter), "M") == [f"M:{meter}"]
-
-
-def test_invalid_time_signature_raises():
-    with pytest.raises(ValueError, match="time signature"):
-        edit_abc_score(EXAMPLE, time_signature="four")
 
 
 # --- keyscale ---
@@ -163,11 +153,6 @@ def test_keyscale_on_keyless_score():
     out = edit_abc_score(tune("C^F", header="K:none\n"), keyscale="D")
     assert header_field(out, "K") == ["K:D"]
     assert body_of(out) == "D^G"
-
-
-def test_invalid_keyscale_raises():
-    with pytest.raises(ValueError, match="keyscale"):
-        edit_abc_score(EXAMPLE, keyscale="H")
 
 
 def test_body_key_changes_and_voices_are_transposed():

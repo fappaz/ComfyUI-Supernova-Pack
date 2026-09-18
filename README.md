@@ -18,7 +18,7 @@ git clone https://github.com/fappaz/ComfyUI-Supernova-Pack.git
 
 ### Edit ABC Score
 
-Takes an ABC score string and returns it edited. Parameters left empty / 0 are unchanged.
+Takes an ABC score string and returns it edited. Parameters left empty / 0 are unchanged. Invalid values (e.g. `keyscale` = `H`) are ignored: the node still runs, and a warning is printed in the ComfyUI console and attached to the node's output.
 
 | Parameter | Example | Effect |
 |---|---|---|

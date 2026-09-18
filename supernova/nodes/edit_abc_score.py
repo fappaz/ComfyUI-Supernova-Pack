@@ -1,8 +1,8 @@
-from comfy_api.latest import io
+from comfy_api.latest import io, ui
 
 from ..core.abc_chords import CHORD_STYLES
 from ..core.abc_notation import MODES
-from ..core.abc_score import edit_abc_score
+from ..core.abc_score import edit_abc_score_with_warnings
 
 
 class SupernovaEditABCScore(io.ComfyNode):
@@ -92,15 +92,15 @@ class SupernovaEditABCScore(io.ComfyNode):
         time_signature: str,
         chord_style: str,
     ) -> io.NodeOutput:
-        return io.NodeOutput(
-            edit_abc_score(
-                abc_score,
-                tempo=tempo,
-                default_note_length=default_note_length,
-                keyscale=keyscale,
-                mode=mode,
-                semitone_offset=semitone_offset,
-                time_signature=time_signature,
-                chord_style=chord_style,
-            )
+        score, warnings = edit_abc_score_with_warnings(
+            abc_score,
+            tempo=tempo,
+            default_note_length=default_note_length,
+            keyscale=keyscale,
+            mode=mode,
+            semitone_offset=semitone_offset,
+            time_signature=time_signature,
+            chord_style=chord_style,
         )
+        # Invalid inputs don't fail the node: they're ignored, logged, and shown on the node.
+        return io.NodeOutput(score, ui=ui.PreviewText("\n".join(warnings)) if warnings else None)
