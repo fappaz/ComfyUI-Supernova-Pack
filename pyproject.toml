@@ -1,0 +1,42 @@
+[project]
+name = "comfyui-supernova-pack"
+version = "0.1.0"
+description = "Pack of nodes with useful features not available natively in ComfyUI"
+requires-python = ">=3.10"
+# Runtime deps only. torch, numpy, PIL etc. are provided by ComfyUI: never list them here.
+dependencies = []
+classifiers = ["Operating System :: OS Independent"]
+
+[project.urls]
+Repository = "https://github.com/fappaz/ComfyUI-Supernova-Pack"
+"Bug Tracker" = "https://github.com/fappaz/ComfyUI-Supernova-Pack/issues"
+
+[tool.comfy]
+PublisherId = "fappaz" # must match your publisher on registry.comfy.org
+DisplayName = "Supernova Pack"
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6", "torch>=2.4", "numpy"]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "tests"]
+addopts = "--import-mode=importlib -p root_dir_plugin"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
