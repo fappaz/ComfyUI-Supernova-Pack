@@ -1,5 +1,5 @@
-from .example_invert import SupernovaExampleInvert
+from .edit_abc_score import SupernovaEditABCScore
 
 NODES = [
-    SupernovaExampleInvert,
+    SupernovaEditABCScore,
 ]

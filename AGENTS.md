@@ -8,12 +8,13 @@ ComfyUI custom node pack built on the V3 node API (`comfy_api.latest`). Follow h
 __init__.py                 # ComfyUI entrypoint: comfy_entrypoint() -> ComfyExtension
 supernova/nodes/__init__.py # NODES list: register every node here
 supernova/nodes/<name>.py   # io.ComfyNode: schema + thin execute()
-supernova/core/<name>.py    # logic. Imports torch only, never comfy / comfy_api
+supernova/core/<name>.py    # logic. Never imports comfy / comfy_api
 tests/test_<name>.py        # tests for supernova/core
+tests/data/                 # test fixtures (e.g. sample scores)
 pyproject.toml              # metadata, version, deps, ruff/pytest config
 ```
 
-`example_invert` is a template. Copy it for a new node, then delete it.
+Use `edit_abc_score` as the reference for a new node.
 
 ## Setup
 
