@@ -27,6 +27,7 @@ Takes an ABC score string and returns it edited. Parameters left empty / 0 are u
 | `keyscale` | `D`, `Eb`, `F#` | Changes the key tonic and transposes all notes and chord symbols by at most 6 semitones. The score's mode is kept, so `D` on a C minor score gives D minor. Mode suffixes (`m`, `min`, `maj`, `dor`, `phr`, `lyd`, `mix`, `aeo`, `loc`) and chord suffixes (`7`, `maj7`) are accepted but don't change the mode. |
 | `semitone_offset` | `-12` | Raises or lowers everything, including the key, by semitones. Applied after `keyscale`. |
 | `time_signature` | `4/4` | Sets the header `M:` field. If the new bar is a whole multiple or divisor of the old one (2/4 ↔ 4/4, 3/8 ↔ 6/8), bars are merged or split. Otherwise only the header changes. |
+| `chord_style` | `sevenths` | Restyles chord symbols: `triads` (Cm7 → Cm), `sevenths` / `ninths` (adds the 7th / 9th that fits the key: Cm → Cm7, Ab → Abmaj7, G → G7), `sixths`, `sus2`, `sus4`, `power` (C5), `no_bass` (Bb/D → Bb) or `remove`. Chords outside the key are left unchanged by `sevenths` / `ninths`. Applied in the new key after `keyscale`. |
 
 Chord symbols get their simplest spelling after transposing (e.g. `G#maj7` may become `Abmaj7`).
 

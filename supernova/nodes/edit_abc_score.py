@@ -1,5 +1,6 @@
 from comfy_api.latest import io
 
+from ..core.abc_chords import CHORD_STYLES
 from ..core.abc_score import edit_abc_score
 
 
@@ -10,9 +11,9 @@ class SupernovaEditABCScore(io.ComfyNode):
             node_id="SupernovaEditABCScore",
             display_name="Edit ABC Score (Supernova)",
             category="Supernova/music",
-            search_aliases=["abc notation", "transpose", "tempo", "key", "sheet music"],
+            search_aliases=["abc notation", "transpose", "tempo", "key", "chords", "sheet music"],
             description=(
-                "Edits an ABC notation score: tempo, default note length, key and time signature. "
+                "Edits an ABC notation score: tempo, default note length, key, time signature and chord style. "
                 "Empty / 0 parameters leave that part unchanged."
             ),
             inputs=[
@@ -53,6 +54,15 @@ class SupernovaEditABCScore(io.ComfyNode):
                     "or divisor of the old one (2/4 <-> 4/4, 3/8 <-> 6/8), bars are merged or split. Otherwise, "
                     "or if a note would cross a new bar line, only the header changes. Empty = unchanged.",
                 ),
+                io.Combo.Input(
+                    "chord_style",
+                    options=list(CHORD_STYLES),
+                    default="keep",
+                    tooltip="Restyle chord symbols. triads: Cm7 -> Cm. sevenths / ninths: the 7th / 9th that fits "
+                    "the key (Cm -> Cm7, Ab -> Abmaj7, G -> G7); chords outside the key are left unchanged. "
+                    "sixths: C6 / Cm6. sus2 / sus4: Csus2. power: C5. no_bass: Bb/D -> Bb. remove: delete "
+                    "chord symbols.",
+                ),
             ],
             outputs=[
                 io.String.Output(display_name="abc_score", tooltip="The edited score."),
@@ -68,6 +78,7 @@ class SupernovaEditABCScore(io.ComfyNode):
         keyscale: str,
         semitone_offset: int,
         time_signature: str,
+        chord_style: str,
     ) -> io.NodeOutput:
         return io.NodeOutput(
             edit_abc_score(
@@ -77,5 +88,6 @@ class SupernovaEditABCScore(io.ComfyNode):
                 keyscale=keyscale,
                 semitone_offset=semitone_offset,
                 time_signature=time_signature,
+                chord_style=chord_style,
             )
         )

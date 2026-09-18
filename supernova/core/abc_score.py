@@ -10,6 +10,7 @@ import re
 from dataclasses import dataclass, replace
 from fractions import Fraction
 
+from .abc_chords import CHORD_STYLES, style_chord
 from .abc_notation import (
     ACCIDENTAL_TEXT,
     ACCIDENTALS,
@@ -53,11 +54,12 @@ def _set_tempo(value: str, bpm: int) -> str:
 
 
 class _Editor:
-    def __init__(self, tempo: int, unit: Fraction | None, keyscale: str, offset: int, meter: str):
+    def __init__(self, tempo: int, unit: Fraction | None, keyscale: str, offset: int, meter: str, chord_style: str):
         self.tempo = tempo
         self.tgt_unit = unit
         self.offset = offset
         self.meter = meter
+        self.chord_style = chord_style
         self.target: tuple[Key, bool] | None = None
         if keyscale:
             parsed = parse_key(keyscale[0].upper() + keyscale[1:])
@@ -260,19 +262,20 @@ class _Editor:
         return pitch + self._length(m.group("len"))
 
     def _chord_symbol(self, symbol: str) -> str:
-        m = CHORD_RE.match(symbol[1:-1])
-        if not self.iv or not m:
-            return symbol
+        text = symbol[1:-1]
+        m = CHORD_RE.match(text)
+        if self.iv and m:
 
-        def move(letter: str, acc: str | None) -> str:
-            alter = {"#": 1, "##": 2, "b": -1, "bb": -2}.get(acc or "", 0)
-            new, _, new_alter = transpose(letter, 0, alter, self.iv, simple=True)
-            return Key(new, new_alter).tonic
+            def move(letter: str, acc: str | None) -> str:
+                alter = {"#": 1, "##": 2, "b": -1, "bb": -2}.get(acc or "", 0)
+                new, _, new_alter = transpose(letter, 0, alter, self.iv, simple=True)
+                return Key(new, new_alter).tonic
 
-        text = move(m.group(1), m.group(2)) + m.group(3)
-        if m.group(4):
-            text += "/" + move(m.group(4), m.group(5))
-        return f'"{text}"'
+            text = move(m.group(1), m.group(2)) + m.group(3)
+            if m.group(4):
+                text += "/" + move(m.group(4), m.group(5))
+        styled = style_chord(text, self._voice().out_key, self.chord_style)
+        return "" if styled is None else f'"{styled}"'
 
 
 def edit_abc_score(
@@ -282,6 +285,7 @@ def edit_abc_score(
     keyscale: str = "",
     semitone_offset: int = 0,
     time_signature: str = "",
+    chord_style: str = "keep",
 ) -> str:
     """Edit an ABC score. Empty / 0 arguments leave that aspect unchanged.
 
@@ -290,7 +294,9 @@ def edit_abc_score(
     - keyscale: new tonic; the score's mode is kept and all notes and chord symbols are
       transposed by the nearest interval (-5..+6 semitones).
     - semitone_offset: extra transposition applied after keyscale.
-    - time_signature: new header M:. Bar lines are not changed.
+    - time_signature: new header M:. Bars are merged / split when the new bar length is a
+      whole multiple or divisor of the old one, otherwise only the header changes.
+    - chord_style: restyle chord symbols, one of CHORD_STYLES ("keep" = unchanged).
     """
     keyscale = keyscale.strip()
     default_note_length = default_note_length.strip()
@@ -299,7 +305,9 @@ def edit_abc_score(
         raise ValueError(f"Invalid tempo {tempo}, expected a positive bpm")
     if time_signature and not METER_RE.match(time_signature):
         raise ValueError(f"Invalid time signature {time_signature!r}, expected e.g. 4/4, 6/8, C")
+    if chord_style not in CHORD_STYLES:
+        raise ValueError(f"Invalid chord style {chord_style!r}, expected one of {', '.join(CHORD_STYLES)}")
     unit = parse_unit(default_note_length) if default_note_length else None
-    if not (tempo or unit or keyscale or semitone_offset or time_signature):
+    if not (tempo or unit or keyscale or semitone_offset or time_signature or chord_style != "keep"):
         return abc_score
-    return _Editor(tempo, unit, keyscale, semitone_offset, time_signature).run(abc_score)
+    return _Editor(tempo, unit, keyscale, semitone_offset, time_signature, chord_style).run(abc_score)
