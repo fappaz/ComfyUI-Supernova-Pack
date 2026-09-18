@@ -56,7 +56,10 @@ Rules:
 
 ## Tasks
 
-`TODO.md` lists all pending tasks. Remove a task from it once it's done, in the same change.
+`TODO.md` lists all pending tasks, each with an ID (`T1`, `T2`...). The user may refer to tasks by ID, e.g. "plan and implement T1".
+- New tasks get the next unused number. Never reuse or renumber IDs.
+- Put the ID in the branch and commits: `feat/t1-chord-styles`, `feat(chords): add chord styles (T1)`.
+- Remove a task once it's done, in the same change.
 
 ## Docs
 
