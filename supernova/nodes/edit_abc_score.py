@@ -48,7 +48,18 @@ class SupernovaEditABCScore(io.ComfyNode):
                     tooltip="Change the mode, keeping the tonic. ionian = major, aeolian = natural minor; dorian, "
                     "phrygian, lydian, mixolydian and locrian are in between. Each note keeps its scale degree "
                     "(C minor -> C major turns every Eb, Ab and Bb into E, A and B); notes outside the scale keep "
-                    "their pitch. Chords in the key change quality (Fm7 -> Fmaj7). keep = unchanged.",
+                    "their pitch. Chords in the key change quality (Fm7 -> Fmaj7). K: is written as plain major or "
+                    "minor with explicit accidentals (C dorian -> K:Cm and =A), so players and music models that "
+                    "don't know mode names still get the notes. keep = unchanged.",
+                ),
+                io.Combo.Input(
+                    "chord_style",
+                    options=list(CHORD_STYLES),
+                    default="keep",
+                    tooltip="Restyle chord symbols. triads: Cm7 -> Cm. sevenths / ninths: the 7th / 9th that fits "
+                    "the key (Cm -> Cm7, Ab -> Abmaj7, G -> G7); chords outside the key are left unchanged. "
+                    "sixths: C6 / Cm6. sus2 / sus4: Csus2. power: C5. no_bass: Bb/D -> Bb. remove: delete "
+                    "chord symbols.",
                 ),
                 io.Int.Input(
                     "semitone_offset",
@@ -65,15 +76,6 @@ class SupernovaEditABCScore(io.ComfyNode):
                     "or divisor of the old one (2/4 <-> 4/4, 3/8 <-> 6/8), bars are merged or split. Otherwise, "
                     "or if a note would cross a new bar line, only the header changes. Empty = unchanged.",
                 ),
-                io.Combo.Input(
-                    "chord_style",
-                    options=list(CHORD_STYLES),
-                    default="keep",
-                    tooltip="Restyle chord symbols. triads: Cm7 -> Cm. sevenths / ninths: the 7th / 9th that fits "
-                    "the key (Cm -> Cm7, Ab -> Abmaj7, G -> G7); chords outside the key are left unchanged. "
-                    "sixths: C6 / Cm6. sus2 / sus4: Csus2. power: C5. no_bass: Bb/D -> Bb. remove: delete "
-                    "chord symbols.",
-                ),
             ],
             outputs=[
                 io.String.Output(display_name="abc_score", tooltip="The edited score."),
@@ -88,9 +90,9 @@ class SupernovaEditABCScore(io.ComfyNode):
         default_note_length: str,
         keyscale: str,
         mode: str,
+        chord_style: str,
         semitone_offset: int,
         time_signature: str,
-        chord_style: str,
     ) -> io.NodeOutput:
         score, warnings = edit_abc_score_with_warnings(
             abc_score,
@@ -98,9 +100,9 @@ class SupernovaEditABCScore(io.ComfyNode):
             default_note_length=default_note_length,
             keyscale=keyscale,
             mode=mode,
+            chord_style=chord_style,
             semitone_offset=semitone_offset,
             time_signature=time_signature,
-            chord_style=chord_style,
         )
         # Invalid inputs don't fail the node: they're ignored, logged, and shown on the node.
         return io.NodeOutput(score, ui=ui.PreviewText("\n".join(warnings)) if warnings else None)

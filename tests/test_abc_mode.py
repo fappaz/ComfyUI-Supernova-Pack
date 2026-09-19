@@ -3,8 +3,8 @@ from pathlib import Path
 
 import pytest
 
-from supernova.core.abc_chords import degree_spelling, remap_quality
-from supernova.core.abc_notation import parse_key
+from supernova.core.abc_chords import degree_spelling, remap_quality, scale
+from supernova.core.abc_notation import ACCIDENTALS, MODES, NATURAL, Key, parse_key, signature
 from supernova.core.abc_score import edit_abc_score
 
 EXAMPLE = (Path(__file__).parent / "data" / "example.abc").read_text()
@@ -76,16 +76,37 @@ def test_same_mode_is_unchanged():
     ("mode", "k"),
     [
         ("ionian", "K:C"),
-        ("dorian", "K:C dor"),
-        ("phrygian", "K:C phr"),
-        ("lydian", "K:C lyd"),
-        ("mixolydian", "K:C mix"),
+        ("dorian", "K:Cm"),
+        ("phrygian", "K:Cm"),
+        ("lydian", "K:C"),
+        ("mixolydian", "K:C"),
         ("aeolian", "K:Cm"),
-        ("locrian", "K:C loc"),
+        ("locrian", "K:Cm"),
     ],
 )
-def test_header_gets_mode(mode, k):
-    assert k_lines(edit_abc_score(tune("C", "C"), mode=mode)) == [k]
+def test_modes_write_major_or_minor_with_accidentals(mode, k):
+    # K: is plain major/minor, and the notes still spell the mode's scale.
+    out = edit_abc_score(tune("CDEFGAB", "C"), mode=mode)
+    assert k_lines(out) == [k]
+    assert pitches(last(out), k) == scale(Key("C", 0, MODES[mode]))
+
+
+def pitches(line: str, k: str) -> list[int]:
+    """Pitch classes of a one-bar line of notes under key k."""
+    sig, out, acc = signature(key(k[2:])), [], ""
+    for ch in line:
+        if ch in "^_=":
+            acc += ch
+            continue
+        out.append((NATURAL[ch.upper()] + (ACCIDENTALS[acc] if acc else sig[ch.upper()])) % 12)
+        acc = ""
+    return out
+
+
+def test_melody_text_shows_the_mode():
+    # Models that read the score as text (e.g. YuE) see the change in the notes, not only in K:.
+    assert last(edit_abc_score(tune("c2EFAGE2"), mode="dorian")) == "c2EF=AGE2"
+    assert last(edit_abc_score(tune("c2EFAGE2"), mode="lydian")) == "c2E^FAGE2"
 
 
 def test_diatonic_notes_keep_their_letters():
@@ -106,7 +127,7 @@ def test_mode_with_keyscale_and_offset():
     assert k_lines(out) == ["K:D"]
     assert last(out) == "DF"  # F is F# in D major
     out = edit_abc_score(tune("CE"), mode="dorian", semitone_offset=2)
-    assert k_lines(out) == ["K:D dor"]
+    assert k_lines(out) == ["K:Dm"]
 
 
 def test_mode_respells_impossible_keys():
@@ -116,11 +137,11 @@ def test_mode_respells_impossible_keys():
 
 def test_mode_replaces_long_mode_names_and_keeps_extras():
     out = edit_abc_score(tune("C", "C minor clef=bass"), mode="dorian")
-    assert k_lines(out) == ["K:C dor clef=bass"]
+    assert k_lines(out) == ["K:Cm clef=bass"]
 
 
 def test_mode_on_keyless_score():
-    assert k_lines(edit_abc_score(tune("C", "none"), mode="dorian")) == ["K:C dor"]
+    assert k_lines(edit_abc_score(tune("C", "none"), mode="dorian")) == ["K:Cm"]
 
 
 def test_body_key_changes_get_the_mode():

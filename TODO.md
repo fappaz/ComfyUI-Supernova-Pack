@@ -2,11 +2,6 @@
 
 Pending tasks. Remove a task once it's done. IDs are never reused; a new task gets the next number.
 
-## Edit ABC Score
-
-- [ ] **T8 · Investigate mode.** `mode` seems to work with mixolydian but not so well with the other modes: it sounds like only the chords change, not the notes. Investigate. Hypothesis: notes in the scale keep their letters and rely on the key signature (`K:C dor`), so a player that ignores mode names in `K:` would play them in major. A possible fix is writing the equivalent key signature (e.g. `K:Bb` for C dorian) or explicit accidentals.
-- [ ] **T9 · Input order.** Reorder the inputs to: `tempo`, `default_note_length`, `keyscale`, `mode`, `chord_style`, `semitone_offset`, `time_signature`.
-
 ## Get ABC Score Data (new node)
 
 - [ ] **T10 · Get ABC Score Data.** New node that reads an ABC score and outputs its header values: `meter` (e.g. `4/4`), `default_note_length` (e.g. `1/16`), `tempo` (int, e.g. `112`), `tempo_unit` (the note value in `Q:`, e.g. `1/4`) and `key` (e.g. `F#m`).

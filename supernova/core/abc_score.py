@@ -51,6 +51,9 @@ class _Voice:
     out_key: Key | None
     unit: Fraction
     pre_key: Key | None = None  # out_key before the mode change
+    # Key written in K: and used for the key signature. Differs from out_key only when the mode
+    # changes: then it's plain major/minor and notes get explicit accidentals (see _written).
+    written_key: Key | None = None
     delta: dict[str, int] = field(default_factory=lambda: NO_DELTA)  # mode change per output letter
 
 
@@ -214,13 +217,22 @@ class _Editor:
             self.default.delta = mode_delta(self.default.pre_key, dst)
         out = dst if (src or self.target or self.mode is not None) else None
         self.default.src_key, self.default.out_key = src, out if self.iv else src
+        self.default.written_key = self._written(self.default.out_key) if self.iv else src
+
+    def _written(self, key: Key | None) -> Key | None:
+        """With a mode change, K: says plain major or minor on the same tonic (C dorian -> Cm), and the
+        notes that differ carry explicit accidentals. Players and music models that don't read mode
+        names in K: (e.g. YuE) then still get every note right."""
+        if self.mode is None or key is None:
+            return key
+        return Key(key.letter, key.alter, 0 if key.mode_fifths in (0, 1, -1) else -3)
 
     def _key(self, value: str, header: bool) -> str:
         parsed = parse_key(value)
         src = parsed[0] if parsed else None
         if header:
             self._plan(src)
-            out = self.default.out_key
+            out = self.default.written_key
         else:
             voice = self._voice()
             out = src
@@ -231,6 +243,7 @@ class _Editor:
                 voice.delta = mode_delta(voice.pre_key, target)
                 out = playable(target)
             voice.src_key, voice.out_key = src, out
+            voice.written_key = out = self._written(out) if (src and self.iv) else out
             self._reset_bar()
         if not self.iv or out is None:
             return value
@@ -290,7 +303,7 @@ class _Editor:
             # Notes in the scale keep their degree; chromatic notes keep their pitch.
             if voice.delta[new] and new_alter == signature(voice.pre_key)[new]:
                 new, new_octave, new_alter = transpose(new, new_octave, new_alter + voice.delta[new], Interval(0, 0))
-            expected = self.out_bar.get((new, new_octave), signature(voice.out_key)[new])
+            expected = self.out_bar.get((new, new_octave), signature(voice.written_key)[new])
             new_acc = ""
             if new_alter != expected:
                 new_acc = ACCIDENTAL_TEXT[new_alter]
@@ -338,9 +351,9 @@ def edit_abc_score(
     default_note_length: str = "",
     keyscale: str = "",
     mode: str = "keep",
+    chord_style: str = "keep",
     semitone_offset: int = 0,
     time_signature: str = "",
-    chord_style: str = "keep",
 ) -> str:
     """Edit an ABC score. Empty / 0 arguments leave that aspect unchanged.
 
