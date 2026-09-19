@@ -56,9 +56,7 @@ CIRCULAR = dict(
     peak_fall=0.5,
     smoothing=0.0,
 )
-SCROLLING = dict(window_seconds=1.0, position="bottom", max_height=1.0)
-STATIC = dict(playhead_width=2, dim_unplayed=True)
-MODES = [("bars", BARS), ("circular", CIRCULAR), ("scrolling", SCROLLING), ("static_playhead", STATIC)]
+MODES = [("bars", BARS), ("circular", CIRCULAR)]
 
 
 def render(x, mode, settings, **kwargs):
@@ -126,12 +124,7 @@ def test_every_mode_renders_frames_in_range(mode, settings):
 
 @pytest.mark.parametrize(("mode", "settings"), MODES)
 def test_silence_is_black(mode, settings):
-    frames = render(torch.zeros(SR), mode, settings)
-    if mode == "static_playhead":  # only the playhead is drawn
-        head = int(frames[5].amin(0).argmax())
-        frames[5, :, head - 2 : head + 3] = 0
-        frames = frames[5]
-    assert frames.max() == 0
+    assert render(torch.zeros(SR), mode, settings).max() == 0
 
 
 def test_bars_light_the_tone_band():
@@ -148,6 +141,17 @@ def test_bars_position(position, rows):
     frames = render(tone(440), "bars", {**BARS, "position": position, "max_height": 0.4})
     assert frames[5, rows].max() == 0  # the other half stays empty
     assert frames[5].max() == 1
+
+
+@pytest.mark.parametrize(("position", "cols"), [("left", slice(W // 2, W)), ("right", slice(0, W // 2))])
+def test_bars_left_and_right_grow_sideways(position, cols):
+    frames = render(tone(440), "bars", {**BARS, "position": position, "max_height": 0.4})
+    assert frames[5, :, cols].max() == 0  # the far half stays empty
+    assert frames[5].max() == 1
+    # Low frequencies at the bottom: a low tone lights lower rows than a high one.
+    low = render(tone(100), "bars", {**BARS, "position": position})[5].amax(1).nonzero().float().mean()
+    high = render(tone(3000), "bars", {**BARS, "position": position})[5].amax(1).nonzero().float().mean()
+    assert low > high
 
 
 def test_bars_mirror_is_symmetric():
@@ -185,29 +189,6 @@ def test_circular_mirror_draws_inside_too():
     ys, xs = torch.meshgrid(torch.arange(H) + 0.5, torch.arange(W) + 0.5, indexing="ij")
     r = ((xs - W / 2) ** 2 + (ys - H / 2) ** 2).sqrt()
     assert frames[5][r < 0.4 * min(W, H) / 2].max() == 1
-
-
-def test_scrolling_starts_on_the_right():
-    frames = render(tone(440), "scrolling", {**SCROLLING, "window_seconds": 2.0})
-    # At 0.5 s with a 2 s window, only the rightmost quarter has sound.
-    assert frames[5, :, : W // 2].max() == 0
-    assert frames[5, :, -W // 8 :].max() > 0.5
-
-
-def test_scrolling_tone_is_a_horizontal_line():
-    frames = render(tone(440), "scrolling", SCROLLING)
-    rows = frames[9].amax(1)
-    assert (rows > 0.5).sum() <= H // 4
-    assert frames[9].argmax(0)[-5:].unique().numel() == 1
-
-
-def test_static_playhead_moves_and_dims():
-    frames = render(tone(440), "static_playhead", STATIC)
-    heads = [int(frames[i].amin(0).argmax()) for i in (0, 5)]
-    assert heads[0] < heads[1]
-    assert heads[1] == pytest.approx(W / 2, abs=2)
-    image = render(tone(440), "static_playhead", {**STATIC, "dim_unplayed": False})
-    assert frames[5, :, -4].max() == pytest.approx(image[5, :, -4].max() * spec.DIM_UNPLAYED)
 
 
 # --- soft failures ---
@@ -278,3 +259,8 @@ def test_lazy_frames_look_like_an_image_batch():
     first = next(it)
     assert first.shape == (H, W, 3) and drawn == [0]
     assert [float(f[0, 0, 0]) for f in [first, *it]] == [0, 0, 1, 1, 2, 2]
+
+
+def test_lazy_frames_crop_to_their_shape():
+    frames = LazyFrames(1, H - 1, W - 1, lambda: iter([torch.zeros(1, H, W)]))
+    assert next(iter(frames)).shape == (H - 1, W - 1, 3)

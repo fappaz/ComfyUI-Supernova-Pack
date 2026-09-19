@@ -46,14 +46,14 @@ Known limits:
 
 ### Generate Audio Spectrogram
 
-Renders audio as a black & white visualizer, one frame per `1 / fps` seconds of the whole track. While it runs, the node shows the frame count and the RAM it needs.
+Renders audio as a black & white visualizer (bars or a circle of bars), one frame per `1 / fps` seconds of the whole track. While it runs, the node shows the frame count and the RAM it needs.
 
 Outputs `frames` (IMAGE), the same frames as a `mask` (to paint, colour or composite with), a `video` with the original audio attached, and `fps`.
 
 | Parameter | Effect |
 |---|---|
-| `width`, `height`, `fps` | Frame size and rate. Connect a `reference` image to use its size instead. |
-| `mode` | `bars` (equalizer), `circular` (bars around a circle), `scrolling` (spectrogram scrolling right to left) or `static_playhead` (whole track, with a moving line). Each mode shows its own options below it. |
+| `width`, `height`, `fps` | Frame size and rate. Connect a `reference` image to use its size instead. The `video` output needs even sizes, so with an odd-sized reference it drops the last pixel row or column; `frames`/`mask` keep the exact size. |
+| `mode` | `bars` (equalizer) or `circular` (bars around a circle). Each mode shows its own options below it. |
 | `freq_scale` | `log` spreads frequencies like we hear them; `linear` is even in Hz. |
 | `min_freq`, `max_freq` | Frequency range shown. |
 | `db_range` | Sensitivity: how far below the loudest moment still shows. |
@@ -61,10 +61,8 @@ Outputs `frames` (IMAGE), the same frames as a `mask` (to paint, colour or compo
 | `render_frames` | On (default): `frames`/`mask` are kept in RAM. Off: they're a single black frame and the `video` is drawn while it's saved, using little memory at any length. Turn it off when you only save the video. |
 
 Mode options:
-- `bars`: `bar_count`, `bar_gap`, `max_height`, `position` (bottom / center / top), `margin`, `mirror` (grow both ways), `reflection`, `peak_caps` + `peak_fall`, `smoothing`.
+- `bars`: `bar_count`, `bar_gap`, `max_height`, `position` (bottom / center / top, or left / right for sideways bars with low frequencies at the bottom), `margin`, `mirror` (grow both ways), `reflection`, `peak_caps` + `peak_fall`, `smoothing`.
 - `circular`: `bar_count`, `bar_gap`, `radius`, `max_length`, `center_x`, `center_y`, `mirror` (grow inwards too), `peak_caps` + `peak_fall`, `smoothing`.
-- `scrolling`: `window_seconds` (time visible), `position`, `max_height`.
-- `static_playhead`: `playhead_width`, `dim_unplayed`.
 
 Known limits:
 - `frames`/`mask` are kept in RAM, like all ComfyUI images: at the default 640×360, 16 fps that's about 15 MB per second (a 3-minute song: about 2.6 GB). A warning is logged above 2 GB, and `max_memory_gb` stops runaway renders. To save a long track, turn off `render_frames`: the video is then streamed.

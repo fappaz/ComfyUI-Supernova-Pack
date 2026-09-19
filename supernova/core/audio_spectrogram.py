@@ -1,6 +1,6 @@
 """Render audio as grayscale visualizer frames: [frames, height, width] in 0-1.
 
-Modes: bars, circular, scrolling (waterfall) and static_playhead. Loudness is measured per
+Modes: bars and circular. Loudness is measured per
 frequency band in dB, normalized so the loudest moment of the track is 1.
 """
 
@@ -15,12 +15,11 @@ import torch.nn.functional as F
 
 logger = logging.getLogger(__name__)
 
-MODES = ("bars", "circular", "scrolling", "static_playhead")
-POSITIONS = ("bottom", "center", "top")
+MODES = ("bars", "circular")
+POSITIONS = ("bottom", "center", "top", "left", "right")
 FREQ_SCALES = ("log", "linear")
 N_FFT = 4096
 SILENCE_DB = -90.0
-DIM_UNPLAYED = 0.35
 WARN_BYTES = 2 * 1024**3
 CHUNK = 16  # frames drawn at once
 
@@ -103,6 +102,13 @@ def _chunks(n: int):
 
 
 def _iter_bars(levels, peak_levels, height, width, s, device):
+    if s["position"] in ("left", "right"):
+        # Draw bottom-up bars on a rotated frame, then turn it so the bars grow from that edge,
+        # with low frequencies at the bottom.
+        for frames in _iter_bars(levels, peak_levels, width, height, {**s, "position": "bottom"}, device):
+            frames = frames.transpose(1, 2)
+            yield frames.flip(1, 2) if s["position"] == "left" else frames.flip(1)
+        return
     n = levels.shape[1]
     margin_x, margin_y = s["margin"] * width, s["margin"] * height
     slot = ((torch.arange(width, device=device) + 0.5) - margin_x) / (width - 2 * margin_x) * n
@@ -155,35 +161,6 @@ def _iter_circular(levels, peak_levels, height, width, s, device):
         yield frame.cpu()
 
 
-def _iter_scrolling(duration, frame_times, height, width, s, analysis, device):
-    rows = max(1, round(s["max_height"] * height))
-    col_dt = s["window_seconds"] / width
-    col_times = torch.arange(math.ceil(duration / col_dt) + 1, device=device) * col_dt
-    image = analysis(col_times, rows).flip(1).T  # [rows, columns], low frequencies at the bottom
-    top = {"bottom": height - rows, "center": (height - rows) // 2, "top": 0}[s["position"]]
-    xs = torch.arange(width, device=device)
-    for c in _chunks(len(frame_times)):
-        # Rightmost column shows the current time; older columns scroll to the left.
-        cols = (frame_times[c].to(device) / col_dt).round().long()[:, None] - (width - 1 - xs)[None, :]
-        visible = (cols >= 0).float()[:, None, :]
-        out = torch.zeros(len(cols), height, width)
-        out[:, top : top + rows] = (image[:, cols.clamp(0, image.shape[1] - 1)].permute(1, 0, 2) * visible).cpu()
-        yield out
-
-
-def _iter_static(duration, frame_times, height, width, s, analysis, device):
-    col_times = (torch.arange(width, device=device) + 0.5) / width * duration
-    image = analysis(col_times, height).flip(1).T  # [height, width]
-    xs = torch.arange(width, device=device) + 0.5
-    for c in _chunks(len(frame_times)):
-        head = (frame_times[c].to(device) / duration * width)[:, None]
-        frames = image[None].repeat(len(head), 1, 1)
-        if s["dim_unplayed"]:
-            frames *= torch.where(xs[None] > head, DIM_UNPLAYED, 1.0)[:, None, :]
-        line = ((xs[None] - head).abs() < s["playhead_width"] / 2).float()[:, None, :]
-        yield torch.maximum(frames, line).cpu()
-
-
 def frame_count(samples: int, sample_rate: int, fps: float) -> int:
     return max(1, math.ceil(samples / sample_rate * fps))
 
@@ -226,17 +203,11 @@ def iter_spectrogram(
         edges = band_edges(bands, min_freq, max_freq, freq_scale)
         return normalize(analyze(x, sample_rate, times, edges), db_range)
 
-    duration = x.numel() / sample_rate
     frame_times = torch.arange(frame_count(x.numel(), sample_rate, fps)) / fps
-    if mode == "scrolling":
-        yield from _iter_scrolling(duration, frame_times, height, width, settings, analysis, device)
-    elif mode == "static_playhead":
-        yield from _iter_static(duration, frame_times, height, width, settings, analysis, device)
-    else:
-        levels = smooth(analysis(frame_times.to(device), settings["bar_count"]), settings["smoothing"])
-        peak_levels = peaks(levels, settings["peak_fall"] / fps) if settings["peak_caps"] else None
-        draw = _iter_circular if mode == "circular" else _iter_bars
-        yield from draw(levels, peak_levels, height, width, settings, device)
+    levels = smooth(analysis(frame_times.to(device), settings["bar_count"]), settings["smoothing"])
+    peak_levels = peaks(levels, settings["peak_fall"] / fps) if settings["peak_caps"] else None
+    draw = _iter_circular if mode == "circular" else _iter_bars
+    yield from draw(levels, peak_levels, height, width, settings, device)
 
 
 def render_spectrogram(
@@ -280,7 +251,9 @@ def render_spectrogram(
 
 class LazyFrames:
     """Looks like a [frames, height, width, 3] IMAGE tensor to code that only reads .shape and
-    iterates frames (like video encoding), but draws each chunk only when it's reached."""
+    iterates frames (like video encoding), but draws each chunk only when it's reached.
+
+    Drawn frames larger than height x width are cropped to it (e.g. to even sizes for video)."""
 
     def __init__(self, count: int, height: int, width: int, draw: Callable[[], Iterator[torch.Tensor]]):
         self.shape = torch.Size((count, height, width, 3))
@@ -292,4 +265,4 @@ class LazyFrames:
     def __iter__(self) -> Iterator[torch.Tensor]:
         for chunk in self._draw():
             for frame in chunk:
-                yield frame.unsqueeze(-1).expand(-1, -1, 3)
+                yield frame[: self.shape[1], : self.shape[2]].unsqueeze(-1).expand(-1, -1, 3)

@@ -63,7 +63,12 @@ MODE_OPTIONS = [
                 step=0.05,
                 tooltip="Tallest bar, as a fraction of the frame.",
             ),
-            io.Combo.Input("position", options=list(POSITIONS), default="bottom", tooltip="Where the bars' base sits."),
+            io.Combo.Input(
+                "position",
+                options=list(POSITIONS),
+                default="bottom",
+                tooltip="Edge the bars grow from. left/right: bars grow sideways, low frequencies at the bottom.",
+            ),
             io.Float.Input(
                 "margin",
                 default=0.05,
@@ -114,30 +119,6 @@ MODE_OPTIONS = [
             *_peak_and_smoothing_inputs(),
         ],
     ),
-    io.DynamicCombo.Option(
-        "scrolling",
-        [
-            io.Float.Input(
-                "window_seconds", default=5.0, min=0.5, max=60.0, step=0.5, tooltip="Seconds of sound visible at once."
-            ),
-            io.Combo.Input("position", options=list(POSITIONS), default="center", tooltip="Where the band sits."),
-            io.Float.Input(
-                "max_height",
-                default=1.0,
-                min=0.05,
-                max=1.0,
-                step=0.05,
-                tooltip="Band height, as a fraction of the frame.",
-            ),
-        ],
-    ),
-    io.DynamicCombo.Option(
-        "static_playhead",
-        [
-            io.Int.Input("playhead_width", default=2, min=1, max=50, tooltip="Playhead line width, in pixels."),
-            io.Boolean.Input("dim_unplayed", default=True, tooltip="Draw the part not played yet darker."),
-        ],
-    ),
 ]
 
 
@@ -154,7 +135,8 @@ class StreamedVideo(InputImpl.VideoFromComponents):
         self._frames, self._audio, self._rate, self._render = frames, audio, frame_rate, render
 
     def get_components(self) -> Types.VideoComponents:
-        images = self._render().unsqueeze(-1).expand(-1, -1, -1, 3)
+        _, height, width, _ = self._frames.shape
+        images = self._render()[:, :height, :width].unsqueeze(-1).expand(-1, -1, -1, 3)
         return Types.VideoComponents(images=images, audio=self._audio, frame_rate=self._rate)
 
     def get_dimensions(self) -> tuple[int, int]:
@@ -188,7 +170,7 @@ class SupernovaGenerateAudioSpectrogram(io.ComfyNode):
             category="Supernova/audio",
             search_aliases=["spectrogram", "audio visualizer", "equalizer", "spectrum", "music video"],
             description=(
-                "Renders audio as a black & white visualizer video (bars, circle, scrolling or static spectrogram). "
+                "Renders audio as a black & white visualizer video (bars or a circle of bars). "
                 "Outputs frames, a mask to paint or composite with, and a video with the original audio. "
                 "frames/mask are kept in RAM (see max_memory_gb); if only video is connected, it's drawn while "
                 "saving and uses little memory."
@@ -280,8 +262,10 @@ class SupernovaGenerateAudioSpectrogram(io.ComfyNode):
         def render() -> torch.Tensor:
             return render_spectrogram(*args, settings, max_bytes=max_bytes, **options)
 
+        # H.264 needs even sizes: the video drops the last row/column if needed; frames/mask keep the exact size.
+        even_h, even_w = height - height % 2, width - width % 2
         streamed = StreamedVideo(
-            LazyFrames(count, height, width, lambda: iter_spectrogram(*args, settings, **options)), audio, rate, render
+            LazyFrames(count, even_h, even_w, lambda: iter_spectrogram(*args, settings, **options)), audio, rate, render
         )
         # Which outputs are connected, for hints only: it can't decide what to render, because ComfyUI
         # would reuse cached outputs after connections change.
@@ -304,7 +288,11 @@ class SupernovaGenerateAudioSpectrogram(io.ComfyNode):
             )
             if len(gray) == count:
                 video = InputImpl.VideoFromComponents(
-                    Types.VideoComponents(images=gray.unsqueeze(-1).expand(-1, -1, -1, 3), audio=audio, frame_rate=rate)
+                    Types.VideoComponents(
+                        images=gray[:, :even_h, :even_w].unsqueeze(-1).expand(-1, -1, -1, 3),
+                        audio=audio,
+                        frame_rate=rate,
+                    )
                 )
             else:  # not rendered (over budget or failed): the video can still be streamed
                 video = streamed
