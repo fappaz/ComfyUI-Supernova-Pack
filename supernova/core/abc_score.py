@@ -37,6 +37,7 @@ from .abc_notation import (
     transpose,
 )
 from .abc_rebar import rebar
+from .node_warnings import run_with_warnings
 
 logger = logging.getLogger(__name__)
 
@@ -389,28 +390,9 @@ def _ignore(name: str, value, expected: str, default):
     return default
 
 
-class _Collect(logging.Handler):
-    def __init__(self):
-        super().__init__()
-        self.messages: list[str] = []
-
-    def emit(self, record: logging.LogRecord):
-        self.messages.append(record.getMessage())
-
-
-# Parent logger of all modules in this package, whatever name ComfyUI loads it under.
-_PACKAGE_LOGGER = logging.getLogger(__name__.rpartition(".")[0])
-
-
 def edit_abc_score_with_warnings(abc_score: str, **kwargs) -> tuple[str, list[str]]:
     """Like edit_abc_score, but never raises. Returns (score, warnings); on an unexpected error the
     score is returned unchanged and the error is logged."""
-    handler = _Collect()
-    _PACKAGE_LOGGER.addHandler(handler)
-    try:
-        return edit_abc_score(abc_score, **kwargs), handler.messages
-    except Exception as e:
-        logger.exception("Edit ABC Score failed, score returned unchanged: %s", e)
-        return abc_score, handler.messages
-    finally:
-        _PACKAGE_LOGGER.removeHandler(handler)
+    return run_with_warnings(
+        "Edit ABC Score (score returned unchanged)", lambda: edit_abc_score(abc_score, **kwargs), lambda: abc_score
+    )

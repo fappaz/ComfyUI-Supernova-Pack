@@ -61,4 +61,4 @@ def test_with_warnings_never_raises(monkeypatch):
     monkeypatch.setattr(abc_score._Editor, "run", boom)
     out, warnings = edit_abc_score_with_warnings(EXAMPLE, tempo=90)
     assert out == EXAMPLE
-    assert warnings == ["Edit ABC Score failed, score returned unchanged: bug"]
+    assert warnings == ["Edit ABC Score (score returned unchanged) failed: bug"]

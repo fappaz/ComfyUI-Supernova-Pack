@@ -45,7 +45,7 @@ Rules:
 - Don't mutate inputs; return new tensors.
 - In nodes, use `comfy.model_management` for devices. Don't hardcode `cuda`.
 - Use `logging`, not `print`.
-- Invalid user input must not fail the node: ignore it, `logger.warning` why, and show the warnings on the node (`ui.PreviewText`). See `edit_abc_score_with_warnings`.
+- Invalid user input must not fail the node: ignore it, `logger.warning` why, and show the warnings on the node (`ui.PreviewText`). Use `run_with_warnings` from `supernova/core/node_warnings.py`.
 - No network calls or telemetry unless the user asks for them.
 
 ## Tests
