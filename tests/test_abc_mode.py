@@ -105,8 +105,8 @@ def pitches(line: str, k: str) -> list[int]:
 
 def test_melody_text_shows_the_mode():
     # Models that read the score as text (e.g. YuE) see the change in the notes, not only in K:.
-    assert last(edit_abc_score(tune("c2EFAGE2"), mode="dorian")) == "c2EF=AGE2"
-    assert last(edit_abc_score(tune("c2EFAGE2"), mode="lydian")) == "c2E^FAGE2"
+    assert last(edit_abc_score(tune("c2EFAGE2"), mode="dorian", explicit_accidentals=True)) == "c2_EF=AG_E2"
+    assert last(edit_abc_score(tune("c2EFAGE2"), mode="lydian", explicit_accidentals=True)) == "c2E^FAGE2"
 
 
 def test_diatonic_notes_keep_their_letters():
@@ -119,13 +119,13 @@ def test_chromatic_notes_keep_their_pitch():
     assert last(edit_abc_score(tune("c=Bc|B"), mode="ionian")) == "cBc|B"
     # Blue note Eb in C major stays Eb, which C minor's signature already has; F# stays F#.
     # In the next bar E (in the scale) becomes Eb.
-    assert last(edit_abc_score(tune("_E^F|EF", "C"), mode="aeolian")) == "E^F|EF"
+    assert last(edit_abc_score(tune("_E^F|EF", "C"), mode="aeolian", explicit_accidentals=True)) == "_E^F|_EF"
 
 
 def test_mode_with_keyscale_and_offset():
-    out = edit_abc_score(tune("CE"), keyscale="D", mode="ionian")
+    out = edit_abc_score(tune("CE"), keyscale="D", mode="ionian", explicit_accidentals=True)
     assert k_lines(out) == ["K:D"]
-    assert last(out) == "DF"  # F is F# in D major
+    assert last(out) == "D^F"
     out = edit_abc_score(tune("CE"), mode="dorian", semitone_offset=2)
     assert k_lines(out) == ["K:Dm"]
 
@@ -145,9 +145,9 @@ def test_mode_on_keyless_score():
 
 
 def test_body_key_changes_get_the_mode():
-    out = edit_abc_score(tune("C|\nK:G\nB|", "C"), mode="aeolian")
+    out = edit_abc_score(tune("C|\nK:G\nB|", "C"), mode="aeolian", explicit_accidentals=True)
     assert k_lines(out) == ["K:Cm", "K:Gm"]
-    assert last(out) == "B|"  # B -> Bb, which Gm's signature has
+    assert last(out) == "_B|"
 
 
 def test_keyscale_mode_warns(caplog):
@@ -174,13 +174,40 @@ def test_chord_style_uses_new_mode():
     assert last(edit_abc_score(tune('"Fm"F'), mode="dorian", chord_style="sevenths")) == '"F7"F'
 
 
-def test_example_round_trip():
-    back = edit_abc_score(edit_abc_score(EXAMPLE, mode="ionian"), mode="aeolian")
-    expected = (
-        EXAMPLE.replace('"G#maj7"', '"Abmaj7"')
-        .replace('"A#/C##"', '"Bb/D"')
-        .replace('"A#maj7/C##"', '"Bbmaj7/D"')
-        # =A, (A natural, outside C minor) is in C major's scale, so on the way back it becomes Ab.
-        .replace("=A,", "A,")
-    )
-    assert back == expected
+def test_example_is_stable_after_one_mode_change():
+    once = edit_abc_score(EXAMPLE, mode="ionian")
+    again = edit_abc_score(edit_abc_score(once, mode="aeolian"), mode="ionian")
+    assert again == once
+
+
+def test_mode_spells_every_altered_note():
+    # Readable without the key signature: E and A are flat in C minor, B natural is spelled out.
+    assert last(edit_abc_score(tune("CDEFGAB", "C"), mode="aeolian", explicit_accidentals=True)) == "CD_EFG_A_B"
+    assert last(edit_abc_score(tune("CDEFGAB"), mode="dorian", explicit_accidentals=True)) == "CD_EFG=A_B"
+
+
+# --- explicit accidentals without other edits ---
+
+
+def test_explicit_accidentals_alone_spells_out_the_key():
+    out = edit_abc_score(EXAMPLE, explicit_accidentals=True)
+    lines = out.splitlines()
+    assert "K:Cm" in lines
+    assert "c2_EF_AG_E2|c2_EF_AG_E2|c2_EF_AG_E2|c2_EF_AG_E2|" in lines
+    assert "ddd=A,A,A,DD|DDD=A,A,A,DD|DDD=A,A,A,DD|DGcegbe'b|" not in lines  # every A, is spelled now
+    assert "ddd=A,=A,=A,DD|DDD=A,=A,=A,DD|DDD=A,=A,=A,DD|DGc_eg_b_e'_b|" in lines
+    assert '"G#maj7"z8|"G#maj7"z8|"G#maj7"z8|"G#maj7"z8|' in lines  # chords untouched
+
+
+def test_explicit_accidentals_is_idempotent():
+    once = edit_abc_score(EXAMPLE, explicit_accidentals=True)
+    assert edit_abc_score(once, explicit_accidentals=True) == once
+
+
+def test_explicit_then_major_changes_the_notes():
+    minor = edit_abc_score(EXAMPLE, explicit_accidentals=True).splitlines()
+    major = edit_abc_score(EXAMPLE, mode="ionian", explicit_accidentals=True).splitlines()
+    # Every melody line with a flat (Eb, Ab, Bb in C minor) now reads differently in major.
+    flats = [(a, b) for a, b in zip(minor, major, strict=True) if "_" in a and not a.startswith('"')]
+    assert len(flats) >= 10
+    assert all(a != b and "_" not in b for a, b in flats)

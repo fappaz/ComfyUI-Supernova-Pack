@@ -49,8 +49,16 @@ class SupernovaEditABCScore(io.ComfyNode):
                     "phrygian, lydian, mixolydian and locrian are in between. Each note keeps its scale degree "
                     "(C minor -> C major turns every Eb, Ab and Bb into E, A and B); notes outside the scale keep "
                     "their pitch. Chords in the key change quality (Fm7 -> Fmaj7). K: is written as plain major or "
-                    "minor with explicit accidentals (C dorian -> K:Cm and =A), so players and music models that "
-                    "don't know mode names still get the notes. keep = unchanged.",
+                    "minor (C dorian -> K:Cm); with explicit_accidentals the changed notes are spelled out (_E, =A). "
+                    "keep = unchanged.",
+                ),
+                io.Boolean.Input(
+                    "explicit_accidentals",
+                    default=True,
+                    tooltip="Write every flat, sharp and natural on the note itself (E-flat as _E) instead of "
+                    "relying on the key signature (K:). Same music, but music models that read the note letters "
+                    "(e.g. YuE) get it right, and mode changes show in the notes. Applies to the whole score, even "
+                    "with nothing else changed. Off = standard ABC style.",
                 ),
                 io.Combo.Input(
                     "chord_style",
@@ -90,6 +98,7 @@ class SupernovaEditABCScore(io.ComfyNode):
         default_note_length: str,
         keyscale: str,
         mode: str,
+        explicit_accidentals: bool,
         chord_style: str,
         semitone_offset: int,
         time_signature: str,
@@ -100,6 +109,7 @@ class SupernovaEditABCScore(io.ComfyNode):
             default_note_length=default_note_length,
             keyscale=keyscale,
             mode=mode,
+            explicit_accidentals=explicit_accidentals,
             chord_style=chord_style,
             semitone_offset=semitone_offset,
             time_signature=time_signature,

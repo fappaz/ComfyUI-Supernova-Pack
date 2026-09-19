@@ -81,7 +81,15 @@ def _set_tempo(value: str, bpm: int) -> str:
 
 class _Editor:
     def __init__(
-        self, tempo: int, unit: Fraction | None, keyscale: str, mode: str, offset: int, meter: str, chord_style: str
+        self,
+        tempo: int,
+        unit: Fraction | None,
+        keyscale: str,
+        mode: str,
+        explicit: bool,
+        offset: int,
+        meter: str,
+        chord_style: str,
     ):
         self.tempo = tempo
         self.mode = MODES.get(mode)  # None = keep
@@ -89,6 +97,7 @@ class _Editor:
         self.offset = offset
         self.meter = meter
         self.chord_style = chord_style
+        self.explicit = explicit
         self.target: tuple[Key, bool] | None = None
         if keyscale:
             parsed = _parse_keyscale(keyscale)
@@ -291,7 +300,7 @@ class _Editor:
     def _note(self, m: re.Match) -> str:
         acc, letter, marks = m.group("acc") or "", m.group("letter"), m.group("octave")
         pitch = acc + letter + marks
-        if self.iv:
+        if self.iv or self.explicit:
             voice = self._voice()
             upper = letter.upper()
             octave = letter.islower() + marks.count("'") - marks.count(",")
@@ -299,14 +308,21 @@ class _Editor:
                 alter = self.src_bar[(upper, octave)] = ACCIDENTALS[acc]
             else:
                 alter = self.src_bar.get((upper, octave), signature(voice.src_key)[upper])
-            new, new_octave, new_alter = transpose(upper, octave, alter, self.iv)
+            new, new_octave, new_alter = transpose(upper, octave, alter, self.iv or Interval(0, 0))
             # Notes in the scale keep their degree; chromatic notes keep their pitch.
             if voice.delta[new] and new_alter == signature(voice.pre_key)[new]:
                 new, new_octave, new_alter = transpose(new, new_octave, new_alter + voice.delta[new], Interval(0, 0))
-            expected = self.out_bar.get((new, new_octave), signature(voice.written_key)[new])
+            key_alter = signature(voice.written_key)[new]
+            expected = self.out_bar.get((new, new_octave), key_alter)
             new_acc = ""
-            if new_alter != expected:
+            if self.explicit:
+                # Spell every altered note out (_E, =A), so the pitch reads the same with or without the
+                # key signature: music models like YuE mostly go by the note letters.
+                if new_alter or key_alter:
+                    new_acc = ACCIDENTAL_TEXT[new_alter]
+            elif new_alter != expected:
                 new_acc = ACCIDENTAL_TEXT[new_alter]
+            if new_acc:
                 self.out_bar[(new, new_octave)] = new_alter
             if new_octave >= 1:
                 pitch = new_acc + new.lower() + "'" * (new_octave - 1)
@@ -351,6 +367,7 @@ def edit_abc_score(
     default_note_length: str = "",
     keyscale: str = "",
     mode: str = "keep",
+    explicit_accidentals: bool = False,
     chord_style: str = "keep",
     semitone_offset: int = 0,
     time_signature: str = "",
@@ -363,6 +380,8 @@ def edit_abc_score(
       transposed by the nearest interval (-5..+6 semitones).
     - mode: new mode (ionian ... locrian) on the same tonic; notes keep their scale degree and
       diatonic chords change quality. "keep" = unchanged.
+    - explicit_accidentals: write every flat, sharp and natural on the note itself (_E for E-flat)
+      instead of relying on the key signature. Applies to the whole score, even with no other edit.
     - semitone_offset: extra transposition applied after keyscale.
     - time_signature: new header M:. Bars are merged / split when the new bar length is a
       whole multiple or divisor of the old one, otherwise only the header changes.
@@ -389,9 +408,12 @@ def edit_abc_score(
             unit = parse_unit(default_note_length)
         except ValueError:
             _ignore("default_note_length", default_note_length, "e.g. 1/8, 1/16", None)
-    if not (tempo or unit or keyscale or mode != "keep" or semitone_offset or time_signature or chord_style != "keep"):
+    edits = (tempo, unit, keyscale, mode != "keep", explicit_accidentals, semitone_offset, time_signature)
+    if not any(edits) and chord_style == "keep":
         return abc_score
-    return _Editor(tempo, unit, keyscale, mode, semitone_offset, time_signature, chord_style).run(abc_score)
+    return _Editor(tempo, unit, keyscale, mode, explicit_accidentals, semitone_offset, time_signature, chord_style).run(
+        abc_score
+    )
 
 
 def _parse_keyscale(keyscale: str):
