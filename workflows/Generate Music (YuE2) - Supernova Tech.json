@@ -1,0 +1,6686 @@
+{
+  "id": "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97",
+  "revision": 0,
+  "last_node_id": 349,
+  "last_link_id": 910,
+  "nodes": [
+    {
+      "id": 54,
+      "type": "PreviewAny",
+      "pos": [
+        -1610,
+        -1930
+      ],
+      "size": [
+        360,
+        540
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 644
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            880,
+            894,
+            896,
+            898
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": [],
+      "widgets_values_named": {},
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 15,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        -3740,
+        -840
+      ],
+      "size": [
+        380,
+        160
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            900
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            358
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            602
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CheckpointLoaderSimple",
+        "models": [
+          {
+            "name": "yue2_3b_int8_convrot.safetensors",
+            "url": "https://huggingface.co/Comfy-Org/YuE2/resolve/main/checkpoints/yue2_3b_int8_convrot.safetensors",
+            "directory": "checkpoints"
+          }
+        ]
+      },
+      "widgets_values": [
+        "yue2_3b_int8_convrot.safetensors"
+      ],
+      "widgets_values_named": {
+        "ckpt_name": "yue2_3b_int8_convrot.safetensors"
+      },
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 165,
+      "type": "LoraLoader",
+      "pos": [
+        -3250,
+        -1020
+      ],
+      "size": [
+        320,
+        130
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 900
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 358
+        },
+        {
+          "name": "strength_model",
+          "type": "FLOAT",
+          "widget": {
+            "name": "strength_model"
+          },
+          "link": 361
+        },
+        {
+          "name": "strength_clip",
+          "type": "FLOAT",
+          "widget": {
+            "name": "strength_clip"
+          },
+          "link": 362
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            902
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            372,
+            895
+          ]
+        }
+      ],
+      "title": "Instrumental LoRA",
+      "properties": {
+        "Node name for S&R": "LoraLoader",
+        "models": [
+          {
+            "name": "ar_lora_inst_v3abc_comfyui.safetensors",
+            "url": "https://huggingface.co/Mothersuperior/YuE2-instrumental-cot-full-loras/resolve/main/ar_lora_inst_v3abc_comfyui.safetensors",
+            "directory": "loras"
+          }
+        ]
+      },
+      "widgets_values": [
+        "yue2\\ar_lora_inst_v3abc_comfyui.safetensors",
+        1,
+        1
+      ],
+      "widgets_values_named": {
+        "lora_name": "yue2\\ar_lora_inst_v3abc_comfyui.safetensors",
+        "strength_model": 1,
+        "strength_clip": 1
+      },
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 170,
+      "type": "ConditioningZeroOut",
+      "pos": [
+        2630,
+        -700
+      ],
+      "size": [
+        310,
+        60
+      ],
+      "flags": {},
+      "order": 31,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 373
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            374
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ConditioningZeroOut"
+      },
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 5,
+      "type": "EmptyYuE2LatentAudio",
+      "pos": [
+        2630,
+        -580
+      ],
+      "size": [
+        310,
+        120
+      ],
+      "flags": {},
+      "order": 32,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "seconds",
+          "type": "FLOAT",
+          "widget": {
+            "name": "seconds"
+          },
+          "link": 58
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            62
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyYuE2LatentAudio"
+      },
+      "widgets_values": [
+        120,
+        1
+      ],
+      "widgets_values_named": {
+        "seconds": 120,
+        "batch_size": 1
+      },
+      "color": "#323",
+      "bgcolor": "#535"
+    },
+    {
+      "id": 30,
+      "type": "YuE2GenerateABC",
+      "pos": [
+        310,
+        -990
+      ],
+      "size": [
+        400,
+        360
+      ],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 895
+        },
+        {
+          "name": "style",
+          "type": "STRING",
+          "widget": {
+            "name": "style"
+          },
+          "link": 896
+        },
+        {
+          "name": "lyrics",
+          "type": "STRING",
+          "widget": {
+            "name": "lyrics"
+          },
+          "link": 680
+        },
+        {
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": 339
+        },
+        {
+          "name": "mode",
+          "type": "COMBO",
+          "widget": {
+            "name": "mode"
+          },
+          "link": 165
+        }
+      ],
+      "outputs": [
+        {
+          "name": "abc",
+          "type": "STRING",
+          "links": [
+            887
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "YuE2GenerateABC"
+      },
+      "widgets_values": [
+        "brazilian samba, tambourine, cavaquinho guitar melody, no vocals, jazzy",
+        "",
+        6664,
+        "fixed",
+        "full",
+        8192,
+        0.7,
+        0.9,
+        30,
+        1.005,
+        100
+      ],
+      "widgets_values_named": {
+        "style": "brazilian samba, tambourine, cavaquinho guitar melody, no vocals, jazzy",
+        "lyrics": "",
+        "seed": 6664,
+        "control_after_generate": "fixed",
+        "mode": "full",
+        "max_abc_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.9,
+        "top_k": 30,
+        "repetition_penalty": 1.005,
+        "penalty_window": 100
+      },
+      "color": "#323",
+      "bgcolor": "#535"
+    },
+    {
+      "id": 37,
+      "type": "CLIPLoader",
+      "pos": [
+        -2930,
+        -2050
+      ],
+      "size": [
+        400,
+        160
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "LLM",
+          "name": "clip_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "clip_name"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            643,
+            656
+          ]
+        }
+      ],
+      "title": "LLM",
+      "properties": {
+        "Node name for S&R": "CLIPLoader",
+        "models": [
+          {
+            "name": "gemma4_e2b_it_int8_convrot.safetensors",
+            "url": "https://huggingface.co/Comfy-Org/gemma-4/resolve/main/text_encoders/gemma4_e2b_it_int8_convrot.safetensors",
+            "directory": "text_encoders"
+          }
+        ]
+      },
+      "widgets_values": [
+        "gemma4_e2b_it_int8_convrot.safetensors",
+        "stable_diffusion",
+        "default"
+      ],
+      "widgets_values_named": {
+        "clip_name": "gemma4_e2b_it_int8_convrot.safetensors",
+        "type": "stable_diffusion",
+        "device": "default"
+      },
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 58,
+      "type": "SaveText",
+      "pos": [
+        1120,
+        -1500
+      ],
+      "size": [
+        480,
+        180
+      ],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "link": 883
+        },
+        {
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": 899
+        }
+      ],
+      "outputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SaveText"
+      },
+      "widgets_values": [
+        "YuE2_song",
+        "txt"
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "YuE2_song",
+        "format": "txt"
+      },
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 31,
+      "type": "YuE2GenerateMusic",
+      "pos": [
+        2190,
+        -860
+      ],
+      "size": [
+        340,
+        440
+      ],
+      "flags": {},
+      "order": 30,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 372
+        },
+        {
+          "name": "style",
+          "type": "STRING",
+          "widget": {
+            "name": "style"
+          },
+          "link": 898
+        },
+        {
+          "name": "lyrics",
+          "type": "STRING",
+          "widget": {
+            "name": "lyrics"
+          },
+          "link": 681
+        },
+        {
+          "name": "abc",
+          "type": "STRING",
+          "widget": {
+            "name": "abc"
+          },
+          "link": 55
+        },
+        {
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": 340
+        },
+        {
+          "name": "mode",
+          "type": "COMBO",
+          "widget": {
+            "name": "mode"
+          },
+          "link": 892
+        },
+        {
+          "name": "max_duration",
+          "type": "FLOAT",
+          "widget": {
+            "name": "max_duration"
+          },
+          "link": 910
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            60,
+            373
+          ]
+        },
+        {
+          "name": "seconds",
+          "type": "FLOAT",
+          "links": [
+            58
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "YuE2GenerateMusic"
+      },
+      "widgets_values": [
+        "brazilian samba, tambourine, cavaquinho guitar melody, no vocals, jazzy",
+        "",
+        "",
+        6663,
+        "fixed",
+        "full",
+        135,
+        1,
+        0.95,
+        100,
+        1.2,
+        1
+      ],
+      "widgets_values_named": {
+        "style": "brazilian samba, tambourine, cavaquinho guitar melody, no vocals, jazzy",
+        "lyrics": "",
+        "abc": "",
+        "seed": 6663,
+        "control_after_generate": "fixed",
+        "mode": "full",
+        "max_duration": 135,
+        "temperature": 1,
+        "top_p": 0.95,
+        "top_k": 100,
+        "repetition_penalty": 1.2,
+        "cfg_scale": 1
+      },
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 166,
+      "type": "PrimitiveFloat",
+      "pos": [
+        -3250,
+        -1180
+      ],
+      "size": [
+        320,
+        100
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "Instrument boost",
+          "name": "value",
+          "type": "FLOAT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": [
+            361,
+            362
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveFloat"
+      },
+      "widgets_values": [
+        0
+      ],
+      "widgets_values_named": {
+        "value": 0
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 82,
+      "type": "PrimitiveNode",
+      "pos": [
+        -2400,
+        -580
+      ],
+      "size": [
+        240,
+        140
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "label": "Generation mode",
+          "name": "COMBO",
+          "type": "COMBO",
+          "widget": {
+            "name": "mode"
+          },
+          "links": [
+            165,
+            891,
+            892
+          ]
+        }
+      ],
+      "title": "mode",
+      "properties": {
+        "Run widget replace on values": false
+      },
+      "widgets_values": [
+        "full",
+        "fixed",
+        ""
+      ],
+      "widgets_values_named": {
+        "value": "full",
+        "control_after_generate": "fixed",
+        "control_filter_list": ""
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 14,
+      "type": "PreviewAny",
+      "pos": [
+        1670,
+        -200
+      ],
+      "size": [
+        380,
+        460
+      ],
+      "flags": {},
+      "order": 29,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 629
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            55
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": [],
+      "widgets_values_named": {},
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 116,
+      "type": "ComfySwitchNode",
+      "pos": [
+        -1350,
+        -730
+      ],
+      "size": [
+        240,
+        120
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "on_false",
+          "shape": 7,
+          "type": "FLOAT",
+          "link": 868
+        },
+        {
+          "name": "on_true",
+          "shape": 7,
+          "type": "FLOAT",
+          "link": 869
+        },
+        {
+          "name": "switch",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "switch"
+          },
+          "link": 889
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "FLOAT",
+          "links": [
+            907,
+            909
+          ]
+        }
+      ],
+      "title": "cover?",
+      "properties": {
+        "Node name for S&R": "ComfySwitchNode"
+      },
+      "widgets_values": [
+        false
+      ],
+      "widgets_values_named": {
+        "switch": false
+      }
+    },
+    {
+      "id": 17,
+      "type": "VAEDecodeAudioTiled",
+      "pos": [
+        3400,
+        -880
+      ],
+      "size": [
+        300,
+        140
+      ],
+      "flags": {},
+      "order": 34,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 402
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 602
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            44
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecodeAudioTiled"
+      },
+      "widgets_values": [
+        1920,
+        128
+      ],
+      "widgets_values_named": {
+        "tile_size": 1920,
+        "overlap": 128
+      },
+      "color": "#323",
+      "bgcolor": "#535"
+    },
+    {
+      "id": 10,
+      "type": "SaveAudioAdvanced",
+      "pos": [
+        3820,
+        -880
+      ],
+      "size": [
+        840,
+        160
+      ],
+      "flags": {},
+      "order": 35,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 44
+        },
+        {
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": 878
+        }
+      ],
+      "outputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SaveAudioAdvanced"
+      },
+      "widgets_values": [
+        "audio/YuE2",
+        "mp3",
+        "V0"
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "audio/YuE2",
+        "format": "mp3",
+        "format.quality": "V0"
+      },
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 154,
+      "type": "PrimitiveInt",
+      "pos": [
+        30,
+        -720
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "Composition seed",
+          "name": "value",
+          "type": "INT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            339
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveInt"
+      },
+      "widgets_values": [
+        43,
+        "increment"
+      ],
+      "widgets_values_named": {
+        "value": 43,
+        "fixed": "increment"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 155,
+      "type": "PrimitiveInt",
+      "pos": [
+        1740,
+        -740
+      ],
+      "size": [
+        280,
+        100
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "Interpretation/execution seed",
+          "name": "value",
+          "type": "INT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            340
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveInt"
+      },
+      "widgets_values": [
+        43,
+        "increment"
+      ],
+      "widgets_values_named": {
+        "value": 43,
+        "fixed": "increment"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 62,
+      "type": "PrimitiveFloat",
+      "pos": [
+        -1820,
+        -730
+      ],
+      "size": [
+        300,
+        100
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "Max duration",
+          "name": "value",
+          "type": "FLOAT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": [
+            868
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveFloat"
+      },
+      "widgets_values": [
+        120
+      ],
+      "widgets_values_named": {
+        "value": 120
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 32,
+      "type": "KSampler",
+      "pos": [
+        3020,
+        -880
+      ],
+      "size": [
+        300,
+        300
+      ],
+      "flags": {},
+      "order": 33,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 903
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 60
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 374
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 62
+        },
+        {
+          "label": "Music sampling seed",
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            402
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        1,
+        "fixed",
+        6,
+        1,
+        "dpmpp_2m",
+        "sgm_uniform",
+        1
+      ],
+      "widgets_values_named": {
+        "seed": 1,
+        "control_after_generate": "fixed",
+        "steps": 6,
+        "cfg": 1,
+        "sampler_name": "dpmpp_2m",
+        "scheduler": "sgm_uniform",
+        "denoise": 1
+      },
+      "color": "#323",
+      "bgcolor": "#535"
+    },
+    {
+      "id": 252,
+      "type": "ComfyMathExpression",
+      "pos": [
+        -630,
+        -730
+      ],
+      "size": [
+        220,
+        130
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "values.a",
+          "type": "FLOAT,INT,BOOLEAN",
+          "link": 909
+        },
+        {
+          "name": "values.b",
+          "shape": 7,
+          "type": "FLOAT,INT,BOOLEAN",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": [
+            910
+          ]
+        },
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": []
+        },
+        {
+          "name": "BOOL",
+          "type": "BOOLEAN",
+          "links": null
+        }
+      ],
+      "title": "Add duration buffer",
+      "properties": {
+        "Node name for S&R": "ComfyMathExpression"
+      },
+      "widgets_values": [
+        "min(a * 1.3, a + 30)"
+      ],
+      "widgets_values_named": {
+        "expression": "min(a * 1.3, a + 30)"
+      }
+    },
+    {
+      "id": 164,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        2630,
+        -1080
+      ],
+      "size": [
+        320,
+        120
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 902
+        },
+        {
+          "label": "Realism boost",
+          "name": "strength_model",
+          "type": "FLOAT",
+          "widget": {
+            "name": "strength_model"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            903
+          ]
+        }
+      ],
+      "title": "NAR LoRA",
+      "properties": {
+        "Node name for S&R": "LoraLoaderModelOnly",
+        "models": [
+          {
+            "name": "nar_lora_joint_v9_comfyui.safetensors",
+            "url": "https://huggingface.co/Mothersuperior/yue2-mothersuperior-realaudio-tokenizer-v4/resolve/main/nar_lora_joint_v9_comfyui.safetensors",
+            "directory": "loras"
+          }
+        ]
+      },
+      "widgets_values": [
+        "yue2\\nar_lora_joint_v9_comfyui.safetensors",
+        1
+      ],
+      "widgets_values_named": {
+        "lora_name": "yue2\\nar_lora_joint_v9_comfyui.safetensors",
+        "strength_model": 1
+      },
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 283,
+      "type": "f53090f1-5676-417a-bc00-729e4ddf6b0a",
+      "pos": [
+        -2020,
+        -440
+      ],
+      "size": [
+        500,
+        180
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "Cover reference mode",
+          "name": "mode",
+          "type": "COMBO",
+          "widget": {
+            "name": "mode"
+          },
+          "link": 891
+        },
+        {
+          "label": "Cover audio start",
+          "name": "start_index",
+          "type": "FLOAT",
+          "widget": {
+            "name": "start_index"
+          },
+          "link": null
+        },
+        {
+          "label": "Cover audio duration",
+          "name": "duration",
+          "type": "FLOAT",
+          "widget": {
+            "name": "duration"
+          },
+          "link": null
+        },
+        {
+          "label": "Cover audio",
+          "name": "audio_1",
+          "type": "AUDIO",
+          "link": 906
+        }
+      ],
+      "outputs": [
+        {
+          "label": "is_cover",
+          "name": "BOOL",
+          "type": "BOOLEAN",
+          "links": [
+            885,
+            889
+          ]
+        },
+        {
+          "label": "abc_score",
+          "name": "output",
+          "type": "STRING",
+          "links": [
+            886
+          ]
+        },
+        {
+          "label": "duration",
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": [
+            869
+          ]
+        }
+      ],
+      "properties": {
+        "previewExposures": [
+          {
+            "name": "audioUI",
+            "sourceNodeId": "20",
+            "sourcePreviewName": "audioUI"
+          }
+        ]
+      },
+      "widgets_values": [
+        "full",
+        0,
+        0
+      ],
+      "widgets_values_named": {
+        "mode": "full",
+        "start_index": 0,
+        "duration": 0
+      },
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 284,
+      "type": "4dac3f7b-0a26-41ed-abb0-5e791471b764",
+      "pos": [
+        1370,
+        -200
+      ],
+      "size": [
+        220,
+        100
+      ],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "abc_score",
+          "name": "string",
+          "type": "STRING",
+          "widget": {
+            "name": "string"
+          },
+          "link": 888
+        },
+        {
+          "label": "Tempo override",
+          "name": "source",
+          "type": "*",
+          "link": 727
+        }
+      ],
+      "outputs": [
+        {
+          "label": "abc_score",
+          "name": "output",
+          "type": "STRING",
+          "links": [
+            629
+          ]
+        }
+      ],
+      "properties": {
+        "previewExposures": []
+      },
+      "widgets_values": [
+        ""
+      ],
+      "widgets_values_named": {
+        "string": ""
+      },
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 287,
+      "type": "dc2ea360-b55e-4d94-8614-afbe014f334f",
+      "pos": [
+        -2110,
+        -1930
+      ],
+      "size": [
+        420,
+        540
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 643
+        },
+        {
+          "label": "Style",
+          "name": "value",
+          "type": "STRING",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        },
+        {
+          "label": "Enhance style with AI",
+          "name": "value_1",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "value_1"
+          },
+          "link": null
+        },
+        {
+          "label": "Style enhancer seed",
+          "name": "value_2",
+          "type": "INT",
+          "widget": {
+            "name": "value_2"
+          },
+          "link": 876
+        },
+        {
+          "label": "Style preset prefix",
+          "name": "choice",
+          "type": "COMBO",
+          "widget": {
+            "name": "choice"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "style",
+          "name": "output",
+          "type": "STRING",
+          "links": [
+            644
+          ]
+        }
+      ],
+      "properties": {
+        "previewExposures": []
+      },
+      "widgets_values": [
+        "City pop, 90 bpm tempo, C major key, 80s Japanese, funky bass, lush jazzy chords, electric piano, intimate breathy female vocal, catchy chorus with harmony vocals, nostalgic mood, studio quality",
+        false,
+        1,
+        "None"
+      ],
+      "widgets_values_named": {
+        "value": "City pop, 90 bpm tempo, C major key, 80s Japanese, funky bass, lush jazzy chords, electric piano, intimate breathy female vocal, catchy chorus with harmony vocals, nostalgic mood, studio quality",
+        "value_1": false,
+        "value_2": 1,
+        "choice": "None"
+      },
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 290,
+      "type": "57323766-b03b-4305-8ac5-cb202d1492bc",
+      "pos": [
+        -740,
+        -1910
+      ],
+      "size": [
+        380,
+        500
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "song_duration",
+          "name": "values.a",
+          "type": "FLOAT,INT,BOOLEAN",
+          "link": 907
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 656
+        },
+        {
+          "label": "song_style",
+          "name": "replace",
+          "type": "STRING",
+          "widget": {
+            "name": "replace"
+          },
+          "link": 894
+        },
+        {
+          "label": "Lyrics/structure enhancer seed",
+          "name": "value",
+          "type": "INT",
+          "widget": {
+            "name": "value"
+          },
+          "link": 678
+        },
+        {
+          "label": "Enhance lyrics/structure with AI",
+          "name": "value_1",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "value_1"
+          },
+          "link": null
+        },
+        {
+          "label": "Lyrics / structure",
+          "name": "replace_1",
+          "type": "STRING",
+          "widget": {
+            "name": "replace_1"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "lyrics",
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            679
+          ]
+        },
+        {
+          "label": "original_lyrics",
+          "name": "STRING_1",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "previewExposures": []
+      },
+      "widgets_values": [
+        "",
+        166,
+        true,
+        "The lyrics should be about how exciting it is to have a local AI model that can generate high quality music. The chorus should be catchy. Include an [End] section"
+      ],
+      "widgets_values_named": {
+        "replace": "",
+        "value": 166,
+        "value_1": true,
+        "replace_1": "The lyrics should be about how exciting it is to have a local AI model that can generate high quality music. The chorus should be catchy. Include an [End] section"
+      },
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 293,
+      "type": "PrimitiveInt",
+      "pos": [
+        -2470,
+        -1490
+      ],
+      "size": [
+        260,
+        100
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "Style enhancer seed",
+          "name": "value",
+          "type": "INT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            876
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveInt"
+      },
+      "widgets_values": [
+        43,
+        "increment"
+      ],
+      "widgets_values_named": {
+        "value": 43,
+        "fixed": "increment"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 295,
+      "type": "PrimitiveInt",
+      "pos": [
+        -1100,
+        -1510
+      ],
+      "size": [
+        300,
+        100
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "Lyrics/structure enhancer seed",
+          "name": "value",
+          "type": "INT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            678
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveInt"
+      },
+      "widgets_values": [
+        43,
+        "increment"
+      ],
+      "widgets_values_named": {
+        "value": 43,
+        "fixed": "increment"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 296,
+      "type": "PreviewAny",
+      "pos": [
+        -300,
+        -1910
+      ],
+      "size": [
+        460,
+        500
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 679
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            680,
+            681,
+            897
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": [],
+      "widgets_values_named": {},
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 305,
+      "type": "PrimitiveInt",
+      "pos": [
+        1070,
+        -160
+      ],
+      "size": [
+        240,
+        100
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "Tempo override",
+          "name": "value",
+          "type": "INT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            727
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveInt"
+      },
+      "widgets_values": [
+        0,
+        "fixed"
+      ],
+      "widgets_values_named": {
+        "value": 0,
+        "fixed": "fixed"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 339,
+      "type": "Note",
+      "pos": [
+        -630,
+        -920
+      ],
+      "size": [
+        220,
+        120
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "Adds a buffer (the lesser of +30% or +30s) to avoid result getting cut off abruptly."
+      ],
+      "widgets_values_named": {
+        "text": "Adds a buffer (the lesser of +30% or +30s) to avoid result getting cut off abruptly."
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 342,
+      "type": "PrimitiveString",
+      "pos": [
+        770,
+        -1480
+      ],
+      "size": [
+        220,
+        60
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            878,
+            899
+          ]
+        }
+      ],
+      "title": "Filename",
+      "properties": {
+        "Node name for S&R": "PrimitiveString"
+      },
+      "widgets_values": [
+        "audio/yue2"
+      ],
+      "widgets_values_named": {
+        "value": "audio/yue2"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 343,
+      "type": "StringConcatenate",
+      "pos": [
+        770,
+        -1730
+      ],
+      "size": [
+        220,
+        180
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string_a",
+          "type": "STRING",
+          "widget": {
+            "name": "string_a"
+          },
+          "link": 880
+        },
+        {
+          "name": "string_b",
+          "type": "STRING",
+          "widget": {
+            "name": "string_b"
+          },
+          "link": 897
+        },
+        {
+          "name": "delimiter",
+          "type": "STRING",
+          "widget": {
+            "name": "delimiter"
+          },
+          "link": 881
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            883
+          ]
+        }
+      ],
+      "title": "Music texts",
+      "properties": {
+        "Node name for S&R": "StringConcatenate"
+      },
+      "widgets_values": [
+        "",
+        "",
+        ""
+      ],
+      "widgets_values_named": {
+        "string_a": "",
+        "string_b": "",
+        "delimiter": ""
+      }
+    },
+    {
+      "id": 344,
+      "type": "PrimitiveStringMultiline",
+      "pos": [
+        460,
+        -1510
+      ],
+      "size": [
+        220,
+        100
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            881
+          ]
+        }
+      ],
+      "title": "Separator",
+      "properties": {
+        "Node name for S&R": "PrimitiveStringMultiline"
+      },
+      "widgets_values": [
+        "\n\n---\n\n"
+      ],
+      "widgets_values_named": {
+        "value": "\n\n---\n\n"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 345,
+      "type": "ComfySwitchNode",
+      "pos": [
+        790,
+        -480
+      ],
+      "size": [
+        240,
+        120
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "on_false",
+          "shape": 7,
+          "type": "STRING",
+          "link": 887
+        },
+        {
+          "name": "on_true",
+          "shape": 7,
+          "type": "STRING",
+          "link": 886
+        },
+        {
+          "name": "switch",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "switch"
+          },
+          "link": 885
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "STRING",
+          "links": [
+            888
+          ]
+        }
+      ],
+      "title": "cover?",
+      "properties": {
+        "Node name for S&R": "ComfySwitchNode"
+      },
+      "widgets_values": [
+        false
+      ],
+      "widgets_values_named": {
+        "switch": false
+      }
+    },
+    {
+      "id": 347,
+      "type": "MarkdownNote",
+      "pos": [
+        -3520,
+        -2050
+      ],
+      "size": [
+        520,
+        580
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "# Workflow by Supernova Tech\n\n_Behold, workflow whisperer!_\n\nPress `Alt + M` in ComfyUI to toggle to App mode, a friendly UI to help you focus on the most important parameters only.\n\nThis workflow uses native nodes only, and is configured to offer to download all missing models from their official sources.\n\n_Until the next Supernova. [End transmission]_"
+      ],
+      "widgets_values_named": {
+        "text": "# Workflow by Supernova Tech\n\n_Behold, workflow whisperer!_\n\nPress `Alt + M` in ComfyUI to toggle to App mode, a friendly UI to help you focus on the most important parameters only.\n\nThis workflow uses native nodes only, and is configured to offer to download all missing models from their official sources.\n\n_Until the next Supernova. [End transmission]_"
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 348,
+      "type": "LoadAudio",
+      "pos": [
+        -2680,
+        -370
+      ],
+      "size": [
+        520,
+        140
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "Cover audio",
+          "name": "audio",
+          "type": "COMBO",
+          "widget": {
+            "name": "audio"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            906
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadAudio"
+      },
+      "widgets_values": [
+        "01. Ground Theme - Super Mario Bros.mp3",
+        ""
+      ],
+      "widgets_values_named": {
+        "audio": "01. Ground Theme - Super Mario Bros.mp3",
+        "upload": ""
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    }
+  ],
+  "links": [
+    [
+      55,
+      14,
+      0,
+      31,
+      3,
+      "STRING"
+    ],
+    [
+      58,
+      31,
+      1,
+      5,
+      0,
+      "FLOAT"
+    ],
+    [
+      60,
+      31,
+      0,
+      32,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      62,
+      5,
+      0,
+      32,
+      3,
+      "LATENT"
+    ],
+    [
+      165,
+      82,
+      0,
+      30,
+      4,
+      "COMBO"
+    ],
+    [
+      339,
+      154,
+      0,
+      30,
+      3,
+      "INT"
+    ],
+    [
+      340,
+      155,
+      0,
+      31,
+      4,
+      "INT"
+    ],
+    [
+      358,
+      15,
+      1,
+      165,
+      1,
+      "CLIP"
+    ],
+    [
+      372,
+      165,
+      1,
+      31,
+      0,
+      "CLIP"
+    ],
+    [
+      373,
+      31,
+      0,
+      170,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      374,
+      170,
+      0,
+      32,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      402,
+      32,
+      0,
+      17,
+      0,
+      "LATENT"
+    ],
+    [
+      602,
+      15,
+      2,
+      17,
+      1,
+      "VAE"
+    ],
+    [
+      629,
+      284,
+      0,
+      14,
+      0,
+      "STRING"
+    ],
+    [
+      643,
+      37,
+      0,
+      287,
+      0,
+      "CLIP"
+    ],
+    [
+      644,
+      287,
+      0,
+      54,
+      0,
+      "STRING"
+    ],
+    [
+      656,
+      37,
+      0,
+      290,
+      1,
+      "CLIP"
+    ],
+    [
+      678,
+      295,
+      0,
+      290,
+      3,
+      "INT"
+    ],
+    [
+      679,
+      290,
+      0,
+      296,
+      0,
+      "STRING"
+    ],
+    [
+      680,
+      296,
+      0,
+      30,
+      2,
+      "STRING"
+    ],
+    [
+      681,
+      296,
+      0,
+      31,
+      2,
+      "STRING"
+    ],
+    [
+      868,
+      62,
+      0,
+      116,
+      0,
+      "FLOAT"
+    ],
+    [
+      869,
+      283,
+      2,
+      116,
+      1,
+      "FLOAT"
+    ],
+    [
+      876,
+      293,
+      0,
+      287,
+      3,
+      "INT"
+    ],
+    [
+      880,
+      54,
+      0,
+      343,
+      0,
+      "STRING"
+    ],
+    [
+      881,
+      344,
+      0,
+      343,
+      2,
+      "STRING"
+    ],
+    [
+      883,
+      343,
+      0,
+      58,
+      0,
+      "STRING"
+    ],
+    [
+      885,
+      283,
+      0,
+      345,
+      2,
+      "BOOLEAN"
+    ],
+    [
+      886,
+      283,
+      1,
+      345,
+      1,
+      "STRING"
+    ],
+    [
+      887,
+      30,
+      0,
+      345,
+      0,
+      "STRING"
+    ],
+    [
+      889,
+      283,
+      0,
+      116,
+      2,
+      "BOOLEAN"
+    ],
+    [
+      892,
+      82,
+      0,
+      31,
+      5,
+      "COMBO"
+    ],
+    [
+      894,
+      54,
+      0,
+      290,
+      2,
+      "STRING"
+    ],
+    [
+      895,
+      165,
+      1,
+      30,
+      0,
+      "CLIP"
+    ],
+    [
+      896,
+      54,
+      0,
+      30,
+      1,
+      "STRING"
+    ],
+    [
+      888,
+      345,
+      0,
+      284,
+      0,
+      "STRING"
+    ],
+    [
+      727,
+      305,
+      0,
+      284,
+      1,
+      "INT"
+    ],
+    [
+      897,
+      296,
+      0,
+      343,
+      1,
+      "STRING"
+    ],
+    [
+      898,
+      54,
+      0,
+      31,
+      1,
+      "STRING"
+    ],
+    [
+      899,
+      342,
+      0,
+      58,
+      1,
+      "STRING"
+    ],
+    [
+      361,
+      166,
+      0,
+      165,
+      2,
+      "FLOAT"
+    ],
+    [
+      362,
+      166,
+      0,
+      165,
+      3,
+      "FLOAT"
+    ],
+    [
+      900,
+      15,
+      0,
+      165,
+      0,
+      "MODEL"
+    ],
+    [
+      902,
+      165,
+      0,
+      164,
+      0,
+      "MODEL"
+    ],
+    [
+      903,
+      164,
+      0,
+      32,
+      0,
+      "MODEL"
+    ],
+    [
+      891,
+      82,
+      0,
+      283,
+      0,
+      "COMBO"
+    ],
+    [
+      906,
+      348,
+      0,
+      283,
+      3,
+      "AUDIO"
+    ],
+    [
+      907,
+      116,
+      0,
+      290,
+      0,
+      "FLOAT"
+    ],
+    [
+      910,
+      252,
+      0,
+      31,
+      6,
+      "FLOAT"
+    ],
+    [
+      44,
+      17,
+      0,
+      10,
+      0,
+      "AUDIO"
+    ],
+    [
+      878,
+      342,
+      0,
+      10,
+      1,
+      "STRING"
+    ],
+    [
+      909,
+      116,
+      0,
+      252,
+      0,
+      "FLOAT"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 11,
+      "title": "Style",
+      "bounding": [
+        -2470,
+        -1990,
+        1340,
+        620
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 12,
+      "title": "Lyrics / structure",
+      "bounding": [
+        -1100,
+        -1990,
+        1360,
+        580
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 15,
+      "title": "Edit score",
+      "bounding": [
+        1050,
+        -260,
+        1040,
+        540
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    }
+  ],
+  "definitions": {
+    "subgraphs": [
+      {
+        "id": "f53090f1-5676-417a-bc00-729e4ddf6b0a",
+        "version": 1,
+        "state": {
+          "lastGroupId": 15,
+          "lastNodeId": 349,
+          "lastLinkId": 910,
+          "lastRerouteId": 129
+        },
+        "revision": 0,
+        "config": {},
+        "name": "Cover",
+        "inputNode": {
+          "id": -10,
+          "bounding": [
+            -2940,
+            940,
+            175.20703125,
+            128
+          ]
+        },
+        "outputNode": {
+          "id": -20,
+          "bounding": [
+            -1000,
+            1520,
+            128,
+            108
+          ]
+        },
+        "inputs": [
+          {
+            "id": "d69c39ad-5d5d-4ba9-923d-55fd13c576ae",
+            "name": "mode",
+            "type": "COMBO",
+            "linkIds": [
+              148
+            ],
+            "localized_name": "mode",
+            "label": "Cover reference mode",
+            "pos": [
+              -2788.79296875,
+              964
+            ]
+          },
+          {
+            "id": "2c925a64-0da7-46f2-bb56-6b1ec0051932",
+            "name": "start_index",
+            "type": "FLOAT",
+            "linkIds": [
+              624
+            ],
+            "pos": [
+              -2788.79296875,
+              984
+            ]
+          },
+          {
+            "id": "fe70943a-653c-46ae-905a-515c57b34994",
+            "name": "duration",
+            "type": "FLOAT",
+            "linkIds": [
+              632
+            ],
+            "pos": [
+              -2788.79296875,
+              1004
+            ]
+          },
+          {
+            "id": "fb6547ee-3ef1-4555-a97b-714261886aad",
+            "name": "audio_1",
+            "type": "AUDIO",
+            "linkIds": [
+              905
+            ],
+            "label": "Cover audio",
+            "pos": [
+              -2788.79296875,
+              1024
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "id": "46ee408c-423e-48e0-8c82-01a4205edda8",
+            "name": "BOOL",
+            "type": "BOOLEAN",
+            "linkIds": [
+              228
+            ],
+            "localized_name": "BOOL",
+            "label": "is_cover",
+            "pos": [
+              -976,
+              1544
+            ]
+          },
+          {
+            "id": "97e21cfb-4146-464b-ad04-b9ab88187bfb",
+            "name": "output",
+            "type": "STRING",
+            "linkIds": [
+              884
+            ],
+            "localized_name": "output",
+            "label": "abc_score",
+            "pos": [
+              -976,
+              1564
+            ]
+          },
+          {
+            "id": "f8325da6-4589-4645-b9a7-77dbfc1aa39c",
+            "name": "FLOAT",
+            "type": "FLOAT",
+            "linkIds": [
+              636
+            ],
+            "label": "duration",
+            "pos": [
+              -976,
+              1584
+            ]
+          }
+        ],
+        "widgets": [],
+        "nodes": [
+          {
+            "id": 18,
+            "type": "AudioEncoderLoader",
+            "pos": [
+              -2200,
+              820
+            ],
+            "size": [
+              400,
+              100
+            ],
+            "flags": {},
+            "order": 0,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [
+              {
+                "localized_name": "AUDIO_ENCODER",
+                "name": "AUDIO_ENCODER",
+                "type": "AUDIO_ENCODER",
+                "links": [
+                  25
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "AudioEncoderLoader",
+              "models": [
+                {
+                  "name": "sheetsage2_bf16.safetensors",
+                  "url": "https://huggingface.co/Comfy-Org/YuE2/resolve/main/audio_encoders/sheetsage2_bf16.safetensors",
+                  "directory": "audio_encoders"
+                }
+              ]
+            },
+            "widgets_values": [
+              "sheetsage2_bf16.safetensors"
+            ],
+            "widgets_values_named": {
+              "audio_encoder_name": "sheetsage2_bf16.safetensors"
+            },
+            "color": "#223",
+            "bgcolor": "#335"
+          },
+          {
+            "id": 33,
+            "type": "TrimAudioDuration",
+            "pos": [
+              -2160,
+              1180
+            ],
+            "size": [
+              360,
+              120
+            ],
+            "flags": {},
+            "order": 2,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "audio",
+                "name": "audio",
+                "type": "AUDIO",
+                "link": 905
+              },
+              {
+                "label": "Cover start_index",
+                "localized_name": "start_index",
+                "name": "start_index",
+                "type": "FLOAT",
+                "widget": {
+                  "name": "start_index"
+                },
+                "link": 624
+              },
+              {
+                "localized_name": "duration",
+                "name": "duration",
+                "type": "FLOAT",
+                "widget": {
+                  "name": "duration"
+                },
+                "link": 633
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "AUDIO",
+                "name": "AUDIO",
+                "type": "AUDIO",
+                "links": [
+                  66
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "TrimAudioDuration"
+            },
+            "widgets_values": [
+              0,
+              19
+            ],
+            "widgets_values_named": {
+              "start_index": 0,
+              "duration": 19
+            },
+            "color": "#2a363b",
+            "bgcolor": "#3f5159"
+          },
+          {
+            "id": 19,
+            "type": "SheetSage2AudioToABC",
+            "pos": [
+              -1740,
+              920
+            ],
+            "size": [
+              280,
+              180
+            ],
+            "flags": {},
+            "order": 1,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "audio_encoder",
+                "name": "audio_encoder",
+                "type": "AUDIO_ENCODER",
+                "link": 25
+              },
+              {
+                "localized_name": "audio",
+                "name": "audio",
+                "type": "AUDIO",
+                "link": 66
+              },
+              {
+                "label": "Cover mode",
+                "localized_name": "mode",
+                "name": "mode",
+                "type": "COMBO",
+                "widget": {
+                  "name": "mode"
+                },
+                "link": 148
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "abc",
+                "name": "abc",
+                "shape": 6,
+                "type": "STRING",
+                "links": [
+                  884
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "SheetSage2AudioToABC"
+            },
+            "widgets_values": [
+              "full"
+            ],
+            "widgets_values_named": {
+              "mode": "full"
+            },
+            "color": "#233",
+            "bgcolor": "#355"
+          },
+          {
+            "id": 35,
+            "type": "ComfyMathExpression",
+            "pos": [
+              -2020,
+              1500
+            ],
+            "size": [
+              240,
+              140
+            ],
+            "flags": {},
+            "order": 3,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "a",
+                "name": "values.a",
+                "type": "FLOAT,INT,BOOLEAN",
+                "link": 634
+              },
+              {
+                "localized_name": "b",
+                "name": "values.b",
+                "shape": 7,
+                "type": "FLOAT,INT,BOOLEAN",
+                "link": null
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "FLOAT",
+                "name": "FLOAT",
+                "type": "FLOAT",
+                "links": null
+              },
+              {
+                "localized_name": "INT",
+                "name": "INT",
+                "type": "INT",
+                "links": null
+              },
+              {
+                "localized_name": "BOOL",
+                "name": "BOOL",
+                "type": "BOOLEAN",
+                "links": [
+                  228
+                ]
+              }
+            ],
+            "title": "is positive?",
+            "properties": {
+              "Node name for S&R": "ComfyMathExpression"
+            },
+            "widgets_values": [
+              "a > 0"
+            ],
+            "widgets_values_named": {
+              "expression": "a > 0"
+            }
+          },
+          {
+            "id": 285,
+            "type": "PrimitiveFloat",
+            "pos": [
+              -2600,
+              1320
+            ],
+            "size": [
+              220,
+              60
+            ],
+            "flags": {},
+            "order": 4,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "value",
+                "name": "value",
+                "type": "FLOAT",
+                "widget": {
+                  "name": "value"
+                },
+                "link": 632
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "FLOAT",
+                "name": "FLOAT",
+                "type": "FLOAT",
+                "links": [
+                  633,
+                  634,
+                  636
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "PrimitiveFloat"
+            },
+            "widgets_values": [
+              0
+            ],
+            "widgets_values_named": {
+              "value": 0
+            }
+          }
+        ],
+        "groups": [],
+        "links": [
+          {
+            "id": 25,
+            "origin_id": 18,
+            "origin_slot": 0,
+            "target_id": 19,
+            "target_slot": 0,
+            "type": "AUDIO_ENCODER"
+          },
+          {
+            "id": 66,
+            "origin_id": 33,
+            "origin_slot": 0,
+            "target_id": 19,
+            "target_slot": 1,
+            "type": "AUDIO"
+          },
+          {
+            "id": 148,
+            "origin_id": -10,
+            "origin_slot": 0,
+            "target_id": 19,
+            "target_slot": 2,
+            "type": "COMBO"
+          },
+          {
+            "id": 228,
+            "origin_id": 35,
+            "origin_slot": 2,
+            "target_id": -20,
+            "target_slot": 0,
+            "type": "BOOLEAN"
+          },
+          {
+            "id": 633,
+            "origin_id": 285,
+            "origin_slot": 0,
+            "target_id": 33,
+            "target_slot": 2,
+            "type": "FLOAT",
+            "parentId": 19
+          },
+          {
+            "id": 636,
+            "origin_id": 285,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 2,
+            "type": "FLOAT",
+            "parentId": 19
+          },
+          {
+            "id": 884,
+            "origin_id": 19,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 1,
+            "type": "STRING"
+          },
+          {
+            "id": 624,
+            "origin_id": -10,
+            "origin_slot": 1,
+            "target_id": 33,
+            "target_slot": 1,
+            "type": "FLOAT"
+          },
+          {
+            "id": 632,
+            "origin_id": -10,
+            "origin_slot": 2,
+            "target_id": 285,
+            "target_slot": 0,
+            "type": "FLOAT"
+          },
+          {
+            "id": 905,
+            "origin_id": -10,
+            "origin_slot": 3,
+            "target_id": 33,
+            "target_slot": 0,
+            "type": "AUDIO"
+          },
+          {
+            "id": 634,
+            "origin_id": 285,
+            "origin_slot": 0,
+            "target_id": 35,
+            "target_slot": 0,
+            "type": "FLOAT",
+            "parentId": 19
+          }
+        ],
+        "reroutes": [
+          {
+            "id": 19,
+            "pos": [
+              -2220,
+              1334
+            ],
+            "linkIds": [
+              633,
+              634,
+              636
+            ]
+          }
+        ],
+        "extra": {}
+      },
+      {
+        "id": "4dac3f7b-0a26-41ed-abb0-5e791471b764",
+        "version": 1,
+        "state": {
+          "lastGroupId": 15,
+          "lastNodeId": 349,
+          "lastLinkId": 910,
+          "lastRerouteId": 129
+        },
+        "revision": 0,
+        "config": {},
+        "name": "Edit score",
+        "inputNode": {
+          "id": -10,
+          "bounding": [
+            -468,
+            1191,
+            137.291015625,
+            88
+          ]
+        },
+        "outputNode": {
+          "id": -20,
+          "bounding": [
+            1260,
+            1180,
+            128,
+            68
+          ]
+        },
+        "inputs": [
+          {
+            "id": "06eae005-8caa-4e78-a235-db9eeae5996d",
+            "name": "string",
+            "type": "STRING",
+            "linkIds": [
+              621,
+              622
+            ],
+            "localized_name": "string",
+            "label": "abc_score",
+            "pos": [
+              -354.708984375,
+              1215
+            ]
+          },
+          {
+            "id": "fa379dcf-4539-42a6-8129-0bf01abe4507",
+            "name": "source",
+            "type": "*",
+            "linkIds": [
+              630,
+              631
+            ],
+            "label": "Tempo override",
+            "pos": [
+              -354.708984375,
+              1235
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "id": "77c78efd-8a82-4eaa-9468-e0b615906260",
+            "name": "output",
+            "type": "STRING",
+            "linkIds": [
+              593
+            ],
+            "localized_name": "output",
+            "label": "abc_score",
+            "pos": [
+              1284,
+              1204
+            ]
+          }
+        ],
+        "widgets": [],
+        "nodes": [
+          {
+            "id": 145,
+            "type": "PreviewAny",
+            "pos": [
+              -260,
+              1520
+            ],
+            "size": [
+              240,
+              180
+            ],
+            "flags": {},
+            "order": 3,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "source",
+                "name": "source",
+                "type": "*",
+                "link": 630
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  307
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "PreviewAny"
+            },
+            "widgets_values": [],
+            "widgets_values_named": {}
+          },
+          {
+            "id": 144,
+            "type": "RegexReplace",
+            "pos": [
+              360,
+              1380
+            ],
+            "size": [
+              240,
+              320
+            ],
+            "flags": {},
+            "order": 2,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "string",
+                "name": "string",
+                "type": "STRING",
+                "widget": {
+                  "name": "string"
+                },
+                "link": 621
+              },
+              {
+                "localized_name": "replace",
+                "name": "replace",
+                "type": "STRING",
+                "widget": {
+                  "name": "replace"
+                },
+                "link": 308
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  311
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "RegexReplace"
+            },
+            "widgets_values": [
+              "",
+              "(Q:\\d+/\\d+=)(\\d+)",
+              "",
+              true,
+              false,
+              false,
+              1
+            ],
+            "widgets_values_named": {
+              "string": "",
+              "regex_pattern": "(Q:\\d+/\\d+=)(\\d+)",
+              "replace": "",
+              "case_insensitive": true,
+              "multiline": false,
+              "dotall": false,
+              "count": 1
+            }
+          },
+          {
+            "id": 136,
+            "type": "ComfyMathExpression",
+            "pos": [
+              360,
+              1000
+            ],
+            "size": [
+              240,
+              180
+            ],
+            "flags": {},
+            "order": 0,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "a",
+                "name": "values.a",
+                "type": "FLOAT,INT,BOOLEAN",
+                "link": 631
+              },
+              {
+                "localized_name": "b",
+                "name": "values.b",
+                "shape": 7,
+                "type": "FLOAT,INT,BOOLEAN",
+                "link": null
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "FLOAT",
+                "name": "FLOAT",
+                "type": "FLOAT",
+                "links": null
+              },
+              {
+                "localized_name": "INT",
+                "name": "INT",
+                "type": "INT",
+                "links": null
+              },
+              {
+                "localized_name": "BOOL",
+                "name": "BOOL",
+                "type": "BOOLEAN",
+                "links": [
+                  292
+                ]
+              }
+            ],
+            "title": "Greater than zero",
+            "properties": {
+              "Node name for S&R": "ComfyMathExpression"
+            },
+            "widgets_values": [
+              "a > 0"
+            ],
+            "widgets_values_named": {
+              "expression": "a > 0"
+            }
+          },
+          {
+            "id": 146,
+            "type": "StringConcatenate",
+            "pos": [
+              40,
+              1440
+            ],
+            "size": [
+              240,
+              260
+            ],
+            "flags": {},
+            "order": 4,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "string_b",
+                "name": "string_b",
+                "type": "STRING",
+                "widget": {
+                  "name": "string_b"
+                },
+                "link": 307
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  308
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "StringConcatenate"
+            },
+            "widgets_values": [
+              "\\g<1>",
+              "",
+              ""
+            ],
+            "widgets_values_named": {
+              "string_a": "\\g<1>",
+              "string_b": "",
+              "delimiter": ""
+            }
+          },
+          {
+            "id": 137,
+            "type": "ComfySwitchNode",
+            "pos": [
+              920,
+              1200
+            ],
+            "size": [
+              240,
+              120
+            ],
+            "flags": {},
+            "order": 1,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "on_false",
+                "name": "on_false",
+                "shape": 7,
+                "type": "STRING",
+                "link": 622
+              },
+              {
+                "localized_name": "on_true",
+                "name": "on_true",
+                "shape": 7,
+                "type": "STRING",
+                "link": 311
+              },
+              {
+                "localized_name": "switch",
+                "name": "switch",
+                "type": "BOOLEAN",
+                "widget": {
+                  "name": "switch"
+                },
+                "link": 292
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "output",
+                "name": "output",
+                "type": "STRING",
+                "links": [
+                  593
+                ]
+              }
+            ],
+            "title": "Is tempo valid?",
+            "properties": {
+              "Node name for S&R": "ComfySwitchNode"
+            },
+            "widgets_values": [
+              false
+            ],
+            "widgets_values_named": {
+              "switch": false
+            }
+          }
+        ],
+        "groups": [],
+        "links": [
+          {
+            "id": 311,
+            "origin_id": 144,
+            "origin_slot": 0,
+            "target_id": 137,
+            "target_slot": 1,
+            "type": "STRING"
+          },
+          {
+            "id": 292,
+            "origin_id": 136,
+            "origin_slot": 2,
+            "target_id": 137,
+            "target_slot": 2,
+            "type": "BOOLEAN"
+          },
+          {
+            "id": 593,
+            "origin_id": 137,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 621,
+            "origin_id": -10,
+            "origin_slot": 0,
+            "target_id": 144,
+            "target_slot": 0,
+            "type": "STRING",
+            "parentId": 13
+          },
+          {
+            "id": 622,
+            "origin_id": -10,
+            "origin_slot": 0,
+            "target_id": 137,
+            "target_slot": 0,
+            "type": "STRING",
+            "parentId": 13
+          },
+          {
+            "id": 630,
+            "origin_id": -10,
+            "origin_slot": 1,
+            "target_id": 145,
+            "target_slot": 0,
+            "type": "*",
+            "parentId": 20
+          },
+          {
+            "id": 308,
+            "origin_id": 146,
+            "origin_slot": 0,
+            "target_id": 144,
+            "target_slot": 1,
+            "type": "STRING"
+          },
+          {
+            "id": 307,
+            "origin_id": 145,
+            "origin_slot": 0,
+            "target_id": 146,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 631,
+            "origin_id": -10,
+            "origin_slot": 1,
+            "target_id": 136,
+            "target_slot": 0,
+            "type": "FLOAT,INT,BOOLEAN",
+            "parentId": 20
+          }
+        ],
+        "reroutes": [
+          {
+            "id": 20,
+            "pos": [
+              -280,
+              1394
+            ],
+            "linkIds": [
+              630,
+              631
+            ]
+          }
+        ],
+        "extra": {}
+      },
+      {
+        "id": "dc2ea360-b55e-4d94-8614-afbe014f334f",
+        "version": 1,
+        "state": {
+          "lastGroupId": 15,
+          "lastNodeId": 349,
+          "lastLinkId": 910,
+          "lastRerouteId": 129
+        },
+        "revision": 0,
+        "config": {},
+        "name": "Music style",
+        "inputNode": {
+          "id": -10,
+          "bounding": [
+            -3500,
+            -3620,
+            182.560546875,
+            148
+          ]
+        },
+        "outputNode": {
+          "id": -20,
+          "bounding": [
+            -400,
+            -3200,
+            128,
+            68
+          ]
+        },
+        "inputs": [
+          {
+            "id": "436c43ba-6d8a-4217-9d6d-d9aad6c53488",
+            "name": "clip",
+            "type": "CLIP",
+            "linkIds": [
+              201
+            ],
+            "localized_name": "clip",
+            "pos": [
+              -3341.439453125,
+              -3596
+            ]
+          },
+          {
+            "id": "18f9b11c-ed1c-46e6-bfda-059968d12be7",
+            "name": "value",
+            "type": "STRING",
+            "linkIds": [
+              647
+            ],
+            "label": "Style",
+            "pos": [
+              -3341.439453125,
+              -3576
+            ]
+          },
+          {
+            "id": "b2c2b817-9052-4401-8d32-183c6d301100",
+            "name": "value_1",
+            "type": "BOOLEAN",
+            "linkIds": [
+              694
+            ],
+            "label": "Enhance style with LLM",
+            "pos": [
+              -3341.439453125,
+              -3556
+            ]
+          },
+          {
+            "id": "e2743625-1166-41d2-91cf-e91efc8cf7f2",
+            "name": "value_2",
+            "type": "INT",
+            "linkIds": [
+              674
+            ],
+            "label": "Style enhancer seed",
+            "pos": [
+              -3341.439453125,
+              -3536
+            ]
+          },
+          {
+            "id": "7baaa007-ea83-4c2c-ae24-c370b1834fa4",
+            "name": "choice",
+            "type": "COMBO",
+            "linkIds": [
+              650
+            ],
+            "label": "Style preset prefix",
+            "pos": [
+              -3341.439453125,
+              -3516
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "id": "e2e1a824-7875-44b1-a23e-cab8abc104c3",
+            "name": "output",
+            "type": "STRING",
+            "linkIds": [
+              157
+            ],
+            "localized_name": "output",
+            "label": "style",
+            "pos": [
+              -376,
+              -3176
+            ]
+          }
+        ],
+        "widgets": [],
+        "nodes": [
+          {
+            "id": 76,
+            "type": "PrimitiveStringMultiline",
+            "pos": [
+              -3000,
+              -4100
+            ],
+            "size": [
+              320,
+              440
+            ],
+            "flags": {},
+            "order": 0,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  128
+                ]
+              }
+            ],
+            "title": "Presets JSON",
+            "properties": {
+              "Node name for S&R": "PrimitiveStringMultiline"
+            },
+            "widgets_values": [
+              "{\n  \"Anime Opening\": \"Anime opening theme, J-rock, driving fast tempo, bright distorted guitars, soaring vocals, dramatic key change, big anthemic chorus, studio quality, \",\n  \"Anime Ending\": \"Anime ending theme, mellow J-pop ballad, clean electric guitar, warm piano, wistful vocals, mid tempo, bittersweet and reflective, studio quality, \",\n  \"Axé\": \"Axé, Bahian carnival pop, brass section, timbau percussion, high energy tempo, call and response vocals, festive, live, uplifting, \",\n  \"Background Underscore\": \"Background underscore, light acoustic guitar and soft piano, subtle electronic beat, neutral upbeat mood, unobtrusive looping bed, clean mix, instrumental\",\n  \"Bluegrass\": \"Bluegrass, banjo, fiddle and mandolin, fast flatpicking, tight vocal harmonies, upbeat acoustic, studio quality, \",\n  \"Blues\": \"Blues, soulful, emotional, slow tempo, guitar and harmonica, heartfelt vocals, \",\n  \"Bossa Nova\": \"Bossa nova, nylon string guitar, soft syncopated rhythm, brushed drums, breathy intimate vocals, jazzy chords, relaxed tempo, studio quality, \",\n  \"Celtic\": \"Celtic folk, tin whistle and fiddle, bodhrán drum, harp, lilting melody, mystical mood, \",\n  \"Chiptune 8-bit\": \"Chiptune, 8-bit sound, retro video game style, catchy melodies, electronic, nostalgic, \",\n  \"Cinematic Orchestra\": \"Cinematic film score, orchestral underscore, sustained strings, solo woodwind melody, subtle piano ostinato, gradual emotional build, spacious and restrained, studio quality, \",\n  \"City Pop\": \"City pop, 80s Japanese, funky bass, lush jazzy chords, electric piano, nostalgic mood, studio quality\",\n  \"Country\": \"Country, acoustic guitar, storytelling lyrics, studio quality, heartfelt vocals, upbeat tempo, southern charm, \",\n  \"Disco\": \"Disco, four on the floor beat, funky rhythm guitar, lush strings, groovy bassline, falsetto vocals, danceable, 80s quality, \",\n  \"Disney Fantasy\": \"Catchy orchestrated song, Disney wholesome theme, magical fantasy, symphonic orchestra, happy mood, princess and prince bright duet vocals, \",\n  \"Drum and Bass\": \"Drum and Bass, fast tempo, electronic, studio quality, heavy basslines, energetic, rhythmic complexity, \",\n  \"Dubstep\": \"Dubstep, electronic, heavy bass, fast tempo, studio quality, aggressive sound design, energetic, \",\n  \"Electronic\": \"Electronic, synth-driven, upbeat tempo, studio quality, catchy hooks, danceable, \",\n  \"Flamenco\": \"Flamenco, Spanish guitar, palmas handclaps, cajón, passionate raw vocals, rapid virtuoso runs, studio quality, \",\n  \"Folk\": \"Folk, acoustic guitar, storytelling lyrics, earthy, heartfelt vocals, \",\n  \"Forró\": \"Forró, accordion lead, zabumba and triangle, fast danceable rhythm, northeastern Brazilian style, joyful mood, \",\n  \"Funk\": \"Funk, groovy basslines, upbeat tempo, catchy hooks, energetic, \",\n  \"Funk Carioca\": \"Funk carioca, Brazilian baile funk, tamborzão beat, heavy 808 bass, chanted vocals, fast tempo, party energy, \",\n  \"Gospel\": \"Gospel, soulful vocals, uplifting lyrics, choir harmonies, positive mood, spiritual, \",\n  \"Grunge\": \"Grunge, distorted guitars, raw vocals, alternative rock, emotional depth, rebellious attitude, \",\n  \"Hard Rock\": \"Hard rock, electric guitar riffs, powerful vocals, energetic, catchy hooks, driving rhythm, \",\n  \"Heavy Metal\": \"Heavy metal, twin guitar harmonies, galloping riffs, double kick drums, powerful soaring vocals, studio quality, \",\n  \"Hip Hop\": \"Hip hop, rap, strong beat, electronic, catchy hooks, urban style, \",\n  \"Jazz Fusion\": \"Jazz fusion, electric piano, virtuoso solos, odd time signatures, funky bass, complex harmony, studio quality\",\n  \"JRPG Battle\": \"Anime battle score, hybrid orchestral rock, taiko drums, urgent string ostinato, choir stabs, electric guitar riffs, high tension, instrumental, \",\n  \"JRPG Village\": \"JRPG village theme, medieval fantasy, gentle lute and recorder, light strings and harp, soft music box bells, looping mid tempo melody, cozy and peaceful, instrumental\",\n  \"K-pop\": \"K-pop, catchy melody, upbeat tempo, electronic, studio quality, danceable, colorful, \",\n  \"Lofi\": \"Lofi hip hop, dusty boom bap drums, jazzy sampled piano chords, vinyl crackle, warm tape saturation, slow tempo, study beats, instrumental, \",\n  \"Melancholic Piano\": \"Solo piano, melancholic, sparse minor key melody, soft felt piano tone, rubato timing, natural room reverb, intimate and reflective, studio quality, \",\n  \"Metalcore\": \"Modern metalcore, virtuoso guitar solo, powerful drum fills, gritty vocals, studio quality, complex power chords, \",\n  \"MPB\": \"MPB, Brazilian popular music, nylon string guitar, sophisticated harmony, poetic lyrics, warm expressive vocals, mellow tempo, \",\n  \"Neo-Soul\": \"Neo-soul, smooth vocals, soulful melodies, studio quality, laid-back grooves, romantic mood, contemporary R&B influences, \",\n  \"New Age\": \"New age, gentle synth pads, soft piano, wooden flute, nature ambience, slow tempo, meditative and healing, spacious reverb, \",\n  \"None\": \"\",\n  \"Pagode\": \"Pagode, banjo and tantã, smooth male lead vocals, group backing harmonies, romantic lyrics, laid-back party mood, Brazilian Portuguese, live, \",\n  \"Pop\": \"Pop, catchy melody, upbeat tempo, electronic, studio quality, radio-friendly, \",\n  \"Progressive Rock\": \"Progressive rock, odd time signatures, extended instrumental sections, analog synths and organ, dynamic shifts, conceptual, studio quality, \",\n  \"R&B\": \"R&B, soulful vocals, smooth rhythm, studio quality, romantic mood, catchy hooks, \",\n  \"Reggae\": \"Reggae, laid-back rhythm, tropical vibes, catchy hooks, positive mood, \",\n  \"Reggaeton\": \"Reggaeton, dembow rhythm, deep bass, Latin urban, catchy hooks, danceable, studio quality, \",\n  \"Salsa\": \"Salsa, upbeat tempo, Latin rhythms, danceable, catchy hooks, \",\n  \"Samba de Roda\": \"Samba de roda, traditional samba, pandeiro and atabaque, handclaps, call and response vocals, raw acoustic, rootsy, \",\n  \"Sertanejo Raiz\": \"Sertanejo raiz, viola caipira, traditional Brazilian countryside, close two-part male harmony, storytelling lyrics, nostalgic, acoustic, \",\n  \"Sertanejo Universitário\": \"Sertanejo universitário, Brazilian country pop, acoustic guitar and viola caipira, accordion, male duo harmonies, romantic lyrics, catchy singalong chorus, \",\n  \"Ska\": \"Ska, upbeat tempo, brass instruments, catchy hooks, energetic, \",\n  \"Smooth Jazz\": \"jazz, saxophone lead, sax oriented, romantic mood, slow tempo, brushed drums, mellow upright bass base, sophisticated, \",\n  \"Symphonic Metal\": \"Symphonic metal, full orchestra and epic choir, palm-muted guitar riffs, double kick drums, operatic vocals, dramatic build, studio quality\",\n  \"Synthwave\": \"Synthwave, retro 80s, electronic, upbeat tempo, neon lights, nostalgic, cinematic, \",\n  \"Tango\": \"Tango, bandoneón lead, dramatic strings, sharp staccato rhythm, passionate, Argentine, \",\n  \"Waltz\": \"Waltz, 3/4 time, lilting triple meter, sweeping strings, elegant ballroom mood, romantic, studio quality, \"\n}"
+            ],
+            "widgets_values_named": {
+              "value": "{\n  \"Anime Opening\": \"Anime opening theme, J-rock, driving fast tempo, bright distorted guitars, soaring vocals, dramatic key change, big anthemic chorus, studio quality, \",\n  \"Anime Ending\": \"Anime ending theme, mellow J-pop ballad, clean electric guitar, warm piano, wistful vocals, mid tempo, bittersweet and reflective, studio quality, \",\n  \"Axé\": \"Axé, Bahian carnival pop, brass section, timbau percussion, high energy tempo, call and response vocals, festive, live, uplifting, \",\n  \"Background Underscore\": \"Background underscore, light acoustic guitar and soft piano, subtle electronic beat, neutral upbeat mood, unobtrusive looping bed, clean mix, instrumental\",\n  \"Bluegrass\": \"Bluegrass, banjo, fiddle and mandolin, fast flatpicking, tight vocal harmonies, upbeat acoustic, studio quality, \",\n  \"Blues\": \"Blues, soulful, emotional, slow tempo, guitar and harmonica, heartfelt vocals, \",\n  \"Bossa Nova\": \"Bossa nova, nylon string guitar, soft syncopated rhythm, brushed drums, breathy intimate vocals, jazzy chords, relaxed tempo, studio quality, \",\n  \"Celtic\": \"Celtic folk, tin whistle and fiddle, bodhrán drum, harp, lilting melody, mystical mood, \",\n  \"Chiptune 8-bit\": \"Chiptune, 8-bit sound, retro video game style, catchy melodies, electronic, nostalgic, \",\n  \"Cinematic Orchestra\": \"Cinematic film score, orchestral underscore, sustained strings, solo woodwind melody, subtle piano ostinato, gradual emotional build, spacious and restrained, studio quality, \",\n  \"City Pop\": \"City pop, 80s Japanese, funky bass, lush jazzy chords, electric piano, nostalgic mood, studio quality\",\n  \"Country\": \"Country, acoustic guitar, storytelling lyrics, studio quality, heartfelt vocals, upbeat tempo, southern charm, \",\n  \"Disco\": \"Disco, four on the floor beat, funky rhythm guitar, lush strings, groovy bassline, falsetto vocals, danceable, 80s quality, \",\n  \"Disney Fantasy\": \"Catchy orchestrated song, Disney wholesome theme, magical fantasy, symphonic orchestra, happy mood, princess and prince bright duet vocals, \",\n  \"Drum and Bass\": \"Drum and Bass, fast tempo, electronic, studio quality, heavy basslines, energetic, rhythmic complexity, \",\n  \"Dubstep\": \"Dubstep, electronic, heavy bass, fast tempo, studio quality, aggressive sound design, energetic, \",\n  \"Electronic\": \"Electronic, synth-driven, upbeat tempo, studio quality, catchy hooks, danceable, \",\n  \"Flamenco\": \"Flamenco, Spanish guitar, palmas handclaps, cajón, passionate raw vocals, rapid virtuoso runs, studio quality, \",\n  \"Folk\": \"Folk, acoustic guitar, storytelling lyrics, earthy, heartfelt vocals, \",\n  \"Forró\": \"Forró, accordion lead, zabumba and triangle, fast danceable rhythm, northeastern Brazilian style, joyful mood, \",\n  \"Funk\": \"Funk, groovy basslines, upbeat tempo, catchy hooks, energetic, \",\n  \"Funk Carioca\": \"Funk carioca, Brazilian baile funk, tamborzão beat, heavy 808 bass, chanted vocals, fast tempo, party energy, \",\n  \"Gospel\": \"Gospel, soulful vocals, uplifting lyrics, choir harmonies, positive mood, spiritual, \",\n  \"Grunge\": \"Grunge, distorted guitars, raw vocals, alternative rock, emotional depth, rebellious attitude, \",\n  \"Hard Rock\": \"Hard rock, electric guitar riffs, powerful vocals, energetic, catchy hooks, driving rhythm, \",\n  \"Heavy Metal\": \"Heavy metal, twin guitar harmonies, galloping riffs, double kick drums, powerful soaring vocals, studio quality, \",\n  \"Hip Hop\": \"Hip hop, rap, strong beat, electronic, catchy hooks, urban style, \",\n  \"Jazz Fusion\": \"Jazz fusion, electric piano, virtuoso solos, odd time signatures, funky bass, complex harmony, studio quality\",\n  \"JRPG Battle\": \"Anime battle score, hybrid orchestral rock, taiko drums, urgent string ostinato, choir stabs, electric guitar riffs, high tension, instrumental, \",\n  \"JRPG Village\": \"JRPG village theme, medieval fantasy, gentle lute and recorder, light strings and harp, soft music box bells, looping mid tempo melody, cozy and peaceful, instrumental\",\n  \"K-pop\": \"K-pop, catchy melody, upbeat tempo, electronic, studio quality, danceable, colorful, \",\n  \"Lofi\": \"Lofi hip hop, dusty boom bap drums, jazzy sampled piano chords, vinyl crackle, warm tape saturation, slow tempo, study beats, instrumental, \",\n  \"Melancholic Piano\": \"Solo piano, melancholic, sparse minor key melody, soft felt piano tone, rubato timing, natural room reverb, intimate and reflective, studio quality, \",\n  \"Metalcore\": \"Modern metalcore, virtuoso guitar solo, powerful drum fills, gritty vocals, studio quality, complex power chords, \",\n  \"MPB\": \"MPB, Brazilian popular music, nylon string guitar, sophisticated harmony, poetic lyrics, warm expressive vocals, mellow tempo, \",\n  \"Neo-Soul\": \"Neo-soul, smooth vocals, soulful melodies, studio quality, laid-back grooves, romantic mood, contemporary R&B influences, \",\n  \"New Age\": \"New age, gentle synth pads, soft piano, wooden flute, nature ambience, slow tempo, meditative and healing, spacious reverb, \",\n  \"None\": \"\",\n  \"Pagode\": \"Pagode, banjo and tantã, smooth male lead vocals, group backing harmonies, romantic lyrics, laid-back party mood, Brazilian Portuguese, live, \",\n  \"Pop\": \"Pop, catchy melody, upbeat tempo, electronic, studio quality, radio-friendly, \",\n  \"Progressive Rock\": \"Progressive rock, odd time signatures, extended instrumental sections, analog synths and organ, dynamic shifts, conceptual, studio quality, \",\n  \"R&B\": \"R&B, soulful vocals, smooth rhythm, studio quality, romantic mood, catchy hooks, \",\n  \"Reggae\": \"Reggae, laid-back rhythm, tropical vibes, catchy hooks, positive mood, \",\n  \"Reggaeton\": \"Reggaeton, dembow rhythm, deep bass, Latin urban, catchy hooks, danceable, studio quality, \",\n  \"Salsa\": \"Salsa, upbeat tempo, Latin rhythms, danceable, catchy hooks, \",\n  \"Samba de Roda\": \"Samba de roda, traditional samba, pandeiro and atabaque, handclaps, call and response vocals, raw acoustic, rootsy, \",\n  \"Sertanejo Raiz\": \"Sertanejo raiz, viola caipira, traditional Brazilian countryside, close two-part male harmony, storytelling lyrics, nostalgic, acoustic, \",\n  \"Sertanejo Universitário\": \"Sertanejo universitário, Brazilian country pop, acoustic guitar and viola caipira, accordion, male duo harmonies, romantic lyrics, catchy singalong chorus, \",\n  \"Ska\": \"Ska, upbeat tempo, brass instruments, catchy hooks, energetic, \",\n  \"Smooth Jazz\": \"jazz, saxophone lead, sax oriented, romantic mood, slow tempo, brushed drums, mellow upright bass base, sophisticated, \",\n  \"Symphonic Metal\": \"Symphonic metal, full orchestra and epic choir, palm-muted guitar riffs, double kick drums, operatic vocals, dramatic build, studio quality\",\n  \"Synthwave\": \"Synthwave, retro 80s, electronic, upbeat tempo, neon lights, nostalgic, cinematic, \",\n  \"Tango\": \"Tango, bandoneón lead, dramatic strings, sharp staccato rhythm, passionate, Argentine, \",\n  \"Waltz\": \"Waltz, 3/4 time, lilting triple meter, sweeping strings, elegant ballroom mood, romantic, studio quality, \"\n}"
+            },
+            "color": "#233",
+            "bgcolor": "#355"
+          },
+          {
+            "id": 77,
+            "type": "JsonExtractString",
+            "pos": [
+              -2640,
+              -3780
+            ],
+            "size": [
+              220,
+              120
+            ],
+            "flags": {},
+            "order": 5,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "json_string",
+                "name": "json_string",
+                "type": "STRING",
+                "widget": {
+                  "name": "json_string"
+                },
+                "link": 128
+              },
+              {
+                "localized_name": "key",
+                "name": "key",
+                "type": "STRING",
+                "widget": {
+                  "name": "key"
+                },
+                "link": 226
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  218
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "JsonExtractString"
+            },
+            "widgets_values": [
+              "",
+              "None"
+            ],
+            "widgets_values_named": {
+              "json_string": "",
+              "key": "None"
+            }
+          },
+          {
+            "id": 115,
+            "type": "CustomCombo",
+            "pos": [
+              -3900,
+              -4700
+            ],
+            "size": [
+              240,
+              1400
+            ],
+            "flags": {
+              "collapsed": false
+            },
+            "order": 8,
+            "mode": 0,
+            "inputs": [
+              {
+                "label": "Style preset prefix",
+                "localized_name": "choice",
+                "name": "choice",
+                "type": "COMBO",
+                "widget": {
+                  "name": "choice"
+                },
+                "link": 650
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  226
+                ]
+              },
+              {
+                "localized_name": "INDEX",
+                "name": "INDEX",
+                "type": "INT",
+                "links": null
+              }
+            ],
+            "title": "Presets Combo",
+            "properties": {
+              "Node name for S&R": "CustomCombo"
+            },
+            "widgets_values": [
+              "None",
+              -1,
+              "Anime Ending",
+              "Anime Opening",
+              "Axé",
+              "Background Underscore",
+              "Bluegrass",
+              "Blues",
+              "Bossa Nova",
+              "Celtic",
+              "Chiptune 8-bit",
+              "Cinematic Orchestra",
+              "City Pop",
+              "Country",
+              "Disco",
+              "Disney Fantasy",
+              "Drum and Bass",
+              "Dubstep",
+              "Electronic",
+              "Flamenco",
+              "Folk",
+              "Forró",
+              "Funk",
+              "Funk Carioca",
+              "Gospel",
+              "Grunge",
+              "Hard Rock",
+              "Heavy Metal",
+              "Hip Hop",
+              "JRPG Battle",
+              "JRPG Village",
+              "Jazz Fusion",
+              "K-pop",
+              "Lofi",
+              "MPB",
+              "Melancholic Piano",
+              "Metalcore",
+              "Neo-Soul",
+              "New Age",
+              "None",
+              "Pagode",
+              "Pop",
+              "Progressive Rock",
+              "R&B",
+              "Reggae",
+              "Reggaeton",
+              "Salsa",
+              "Samba de Roda",
+              "Sertanejo Raiz",
+              "Sertanejo Universitário",
+              "Ska",
+              "Smooth Jazz",
+              "Symphonic Metal",
+              "Synthwave",
+              "Tango",
+              "Waltz",
+              ""
+            ],
+            "widgets_values_named": {
+              "choice": "None",
+              "index": -1,
+              "option1": "Anime Ending",
+              "option2": "Anime Opening",
+              "option3": "Axé",
+              "option4": "Background Underscore",
+              "option5": "Bluegrass",
+              "option6": "Blues",
+              "option7": "Bossa Nova",
+              "option8": "Celtic",
+              "option9": "Chiptune 8-bit",
+              "option10": "Cinematic Orchestra",
+              "option11": "City Pop",
+              "option12": "Country",
+              "option13": "Disco",
+              "option14": "Disney Fantasy",
+              "option15": "Drum and Bass",
+              "option16": "Dubstep",
+              "option17": "Electronic",
+              "option18": "Flamenco",
+              "option19": "Folk",
+              "option20": "Forró",
+              "option21": "Funk",
+              "option22": "Funk Carioca",
+              "option23": "Gospel",
+              "option24": "Grunge",
+              "option25": "Hard Rock",
+              "option26": "Heavy Metal",
+              "option27": "Hip Hop",
+              "option28": "JRPG Battle",
+              "option29": "JRPG Village",
+              "option30": "Jazz Fusion",
+              "option31": "K-pop",
+              "option32": "Lofi",
+              "option33": "MPB",
+              "option34": "Melancholic Piano",
+              "option35": "Metalcore",
+              "option36": "Neo-Soul",
+              "option37": "New Age",
+              "option38": "None",
+              "option39": "Pagode",
+              "option40": "Pop",
+              "option41": "Progressive Rock",
+              "option42": "R&B",
+              "option43": "Reggae",
+              "option44": "Reggaeton",
+              "option45": "Salsa",
+              "option46": "Samba de Roda",
+              "option47": "Sertanejo Raiz",
+              "option48": "Sertanejo Universitário",
+              "option49": "Ska",
+              "option50": "Smooth Jazz",
+              "option51": "Symphonic Metal",
+              "option52": "Synthwave",
+              "option53": "Tango",
+              "option54": "Waltz",
+              "option55": ""
+            },
+            "color": "#233",
+            "bgcolor": "#355"
+          },
+          {
+            "id": 112,
+            "type": "StringConcatenate",
+            "pos": [
+              -2320,
+              -3940
+            ],
+            "size": [
+              240,
+              260
+            ],
+            "flags": {},
+            "order": 7,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "string_a",
+                "name": "string_a",
+                "type": "STRING",
+                "widget": {
+                  "name": "string_a"
+                },
+                "link": 218
+              },
+              {
+                "localized_name": "string_b",
+                "name": "string_b",
+                "type": "STRING",
+                "widget": {
+                  "name": "string_b"
+                },
+                "link": 647
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  215
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "StringConcatenate"
+            },
+            "widgets_values": [
+              "",
+              "",
+              ""
+            ],
+            "widgets_values_named": {
+              "string_a": "",
+              "string_b": "",
+              "delimiter": ""
+            }
+          },
+          {
+            "id": 91,
+            "type": "PreviewAny",
+            "pos": [
+              -2020,
+              -3880
+            ],
+            "size": [
+              220,
+              140
+            ],
+            "flags": {
+              "collapsed": false
+            },
+            "order": 6,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "source",
+                "name": "source",
+                "type": "*",
+                "link": 215
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  216,
+                  217
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "PreviewAny"
+            },
+            "widgets_values": [],
+            "widgets_values_named": {},
+            "color": "#2a363b",
+            "bgcolor": "#3f5159"
+          },
+          {
+            "id": 38,
+            "type": "TextGenerate",
+            "pos": [
+              -1440,
+              -3620
+            ],
+            "size": [
+              260,
+              440
+            ],
+            "flags": {},
+            "order": 2,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "clip",
+                "name": "clip",
+                "type": "CLIP",
+                "link": 201
+              },
+              {
+                "localized_name": "image",
+                "name": "image",
+                "shape": 7,
+                "type": "IMAGE",
+                "link": null
+              },
+              {
+                "localized_name": "video",
+                "name": "video",
+                "shape": 7,
+                "type": "IMAGE",
+                "link": null
+              },
+              {
+                "localized_name": "audio",
+                "name": "audio",
+                "shape": 7,
+                "type": "AUDIO",
+                "link": null
+              },
+              {
+                "localized_name": "prompt",
+                "name": "prompt",
+                "type": "STRING",
+                "widget": {
+                  "name": "prompt"
+                },
+                "link": 77
+              },
+              {
+                "localized_name": "seed",
+                "name": "sampling_mode.seed",
+                "type": "INT",
+                "widget": {
+                  "name": "sampling_mode.seed"
+                },
+                "link": 674
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "generated_text",
+                "name": "generated_text",
+                "type": "STRING",
+                "links": [
+                  560
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "TextGenerate"
+            },
+            "widgets_values": [
+              "",
+              4096,
+              "on",
+              0.75,
+              64,
+              0.9,
+              0.05,
+              1,
+              1,
+              0,
+              false,
+              true,
+              "auto"
+            ],
+            "widgets_values_named": {
+              "prompt": "",
+              "max_length": 4096,
+              "sampling_mode": "on",
+              "sampling_mode.temperature": 0.75,
+              "sampling_mode.top_k": 64,
+              "sampling_mode.top_p": 0.9,
+              "sampling_mode.min_p": 0.05,
+              "sampling_mode.repetition_penalty": 1,
+              "sampling_mode.seed": 1,
+              "sampling_mode.presence_penalty": 0,
+              "thinking": false,
+              "use_default_template": true,
+              "mtp": "auto"
+            },
+            "color": "#432",
+            "bgcolor": "#653"
+          },
+          {
+            "id": 41,
+            "type": "PrimitiveStringMultiline",
+            "pos": [
+              -2160,
+              -3420
+            ],
+            "size": [
+              380,
+              740
+            ],
+            "flags": {},
+            "order": 1,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  76
+                ]
+              }
+            ],
+            "title": "System Prompt",
+            "properties": {
+              "Node name for S&R": "PrimitiveStringMultiline"
+            },
+            "widgets_values": [
+              "You expand music style tags for an AI song generator. Output ONE line of comma-separated tags in plain text, nothing else.\n\nFill these slots in this order:\n1. Language: only if the user named one. Write the full language name (en-US → English). Otherwise omit this slot.\n2. Genre and subgenre\n3. Vocal: gender + character (e.g. \"breathy female vocal\"). If the user asks for instrumental, write \"instrumental, no vocals\" here instead.\n4. Tempo: feel + BPM (e.g. \"driving 128 BPM\")\n5. Instruments: 1-4 specific instruments with a descriptor each\n6. Musical details (optional, 0-2): key, meter, harmony or rhythm feel (e.g. \"A minor\", \"6/8 time\", \"lush jazz chords\", \"swung groove\")\n7. Song character (optional, 0-1): hook, dynamics or energy arc (e.g. \"huge singalong chorus\", \"quiet-loud dynamics\", \"slow emotional build\")\n8. Mood / atmosphere: 1-2 tags\n9. Production: 1 tag (e.g. \"polished modern mix\", \"lo-fi tape warmth\", \"studio quality\", \"live recording\")\n\nSpecificity:\n- Always name the subgenre that best fits the request, even from a single genre word.\n- When the user gives several tags, let the combination decide the subgenre.\n\nRules:\n- Keep the meaning of every tag the user gave. You may rephrase it and place it in its matching slot.\n- Never contradict the user's tags. Everything you add must fit them.\n- If the user names an artist or song, describe its sound with the slots above instead of repeating the name.\n- Copy unusual words (with underscores or numbers) exactly as written and place them at the end.\n- Use short descriptive phrases (2-4 words), not sentences.\n- Output 7-14 tags total. No explanations, no quotes, no line breaks.\n\nExamples:\nInput: reggae\nOutput: roots reggae, warm male vocal, laid-back 75 BPM, offbeat skank guitar, deep dub bassline, one-drop drums, bright organ bubble, relaxed swaying groove, sunny easygoing mood, vintage analog warmth\n\nInput: sad, piano solo, instrumental\nOutput: neoclassical piano, instrumental, no vocals, slow 68 BPM, solo felt piano, D minor, rubato phrasing, gentle rise and fall, sad reflective mood, studio quality\n\nInput: Japanese, city pop, groovy bass, 1980s, female vocal\nOutput: Japanese, 1980s city pop, smooth female vocal, mid-tempo 112 BPM, funky slap bass, glossy electric piano, clean funk guitar, bright brass stabs, lush jazz chords, catchy sing-along hook, nostalgic nighttime mood, polished retro mix\n\nInput: synthwave, dark, nvx_vox2\nOutput: darksynth, brooding male vocal, driving 118 BPM, analog bass arpeggio, gated reverb drums, cold lead synth, minor key, relentless building tension, ominous neon atmosphere, punchy retro mix, nvx_vox2\n\n---\n\nUser request:\n\n```\n{prompt}\n```"
+            ],
+            "widgets_values_named": {
+              "value": "You expand music style tags for an AI song generator. Output ONE line of comma-separated tags in plain text, nothing else.\n\nFill these slots in this order:\n1. Language: only if the user named one. Write the full language name (en-US → English). Otherwise omit this slot.\n2. Genre and subgenre\n3. Vocal: gender + character (e.g. \"breathy female vocal\"). If the user asks for instrumental, write \"instrumental, no vocals\" here instead.\n4. Tempo: feel + BPM (e.g. \"driving 128 BPM\")\n5. Instruments: 1-4 specific instruments with a descriptor each\n6. Musical details (optional, 0-2): key, meter, harmony or rhythm feel (e.g. \"A minor\", \"6/8 time\", \"lush jazz chords\", \"swung groove\")\n7. Song character (optional, 0-1): hook, dynamics or energy arc (e.g. \"huge singalong chorus\", \"quiet-loud dynamics\", \"slow emotional build\")\n8. Mood / atmosphere: 1-2 tags\n9. Production: 1 tag (e.g. \"polished modern mix\", \"lo-fi tape warmth\", \"studio quality\", \"live recording\")\n\nSpecificity:\n- Always name the subgenre that best fits the request, even from a single genre word.\n- When the user gives several tags, let the combination decide the subgenre.\n\nRules:\n- Keep the meaning of every tag the user gave. You may rephrase it and place it in its matching slot.\n- Never contradict the user's tags. Everything you add must fit them.\n- If the user names an artist or song, describe its sound with the slots above instead of repeating the name.\n- Copy unusual words (with underscores or numbers) exactly as written and place them at the end.\n- Use short descriptive phrases (2-4 words), not sentences.\n- Output 7-14 tags total. No explanations, no quotes, no line breaks.\n\nExamples:\nInput: reggae\nOutput: roots reggae, warm male vocal, laid-back 75 BPM, offbeat skank guitar, deep dub bassline, one-drop drums, bright organ bubble, relaxed swaying groove, sunny easygoing mood, vintage analog warmth\n\nInput: sad, piano solo, instrumental\nOutput: neoclassical piano, instrumental, no vocals, slow 68 BPM, solo felt piano, D minor, rubato phrasing, gentle rise and fall, sad reflective mood, studio quality\n\nInput: Japanese, city pop, groovy bass, 1980s, female vocal\nOutput: Japanese, 1980s city pop, smooth female vocal, mid-tempo 112 BPM, funky slap bass, glossy electric piano, clean funk guitar, bright brass stabs, lush jazz chords, catchy sing-along hook, nostalgic nighttime mood, polished retro mix\n\nInput: synthwave, dark, nvx_vox2\nOutput: darksynth, brooding male vocal, driving 118 BPM, analog bass arpeggio, gated reverb drums, cold lead synth, minor key, relentless building tension, ominous neon atmosphere, punchy retro mix, nvx_vox2\n\n---\n\nUser request:\n\n```\n{prompt}\n```"
+            },
+            "color": "#233",
+            "bgcolor": "#355"
+          },
+          {
+            "id": 269,
+            "type": "PreviewAny",
+            "pos": [
+              -1100,
+              -3620
+            ],
+            "size": [
+              240,
+              140
+            ],
+            "flags": {},
+            "order": 9,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "source",
+                "name": "source",
+                "type": "*",
+                "link": 560
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  559
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "PreviewAny"
+            },
+            "widgets_values": [],
+            "widgets_values_named": {},
+            "color": "#2a363b",
+            "bgcolor": "#3f5159"
+          },
+          {
+            "id": 43,
+            "type": "StringReplace",
+            "pos": [
+              -1700,
+              -3440
+            ],
+            "size": [
+              220,
+              200
+            ],
+            "flags": {},
+            "order": 3,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "string",
+                "name": "string",
+                "type": "STRING",
+                "widget": {
+                  "name": "string"
+                },
+                "link": 76
+              },
+              {
+                "label": "Style",
+                "localized_name": "replace",
+                "name": "replace",
+                "type": "STRING",
+                "widget": {
+                  "name": "replace"
+                },
+                "link": 216
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  77
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "StringReplace"
+            },
+            "widgets_values": [
+              "",
+              "{prompt}",
+              ""
+            ],
+            "widgets_values_named": {
+              "string": "",
+              "find": "{prompt}",
+              "replace": ""
+            }
+          },
+          {
+            "id": 48,
+            "type": "ComfySwitchNode",
+            "pos": [
+              -700,
+              -3460
+            ],
+            "size": [
+              240,
+              120
+            ],
+            "flags": {},
+            "order": 4,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "on_false",
+                "name": "on_false",
+                "shape": 7,
+                "type": "STRING",
+                "link": 217
+              },
+              {
+                "localized_name": "on_true",
+                "name": "on_true",
+                "shape": 7,
+                "type": "STRING",
+                "link": 559
+              },
+              {
+                "localized_name": "switch",
+                "name": "switch",
+                "type": "BOOLEAN",
+                "widget": {
+                  "name": "switch"
+                },
+                "link": 694
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "output",
+                "name": "output",
+                "type": "STRING",
+                "links": [
+                  157
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "ComfySwitchNode"
+            },
+            "widgets_values": [
+              false
+            ],
+            "widgets_values_named": {
+              "switch": false
+            }
+          }
+        ],
+        "groups": [
+          {
+            "id": 3,
+            "title": "Templates",
+            "bounding": [
+              -3000,
+              -4160,
+              940,
+              500
+            ],
+            "color": "#3f789e",
+            "flags": {}
+          }
+        ],
+        "links": [
+          {
+            "id": 128,
+            "origin_id": 76,
+            "origin_slot": 0,
+            "target_id": 77,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 226,
+            "origin_id": 115,
+            "origin_slot": 0,
+            "target_id": 77,
+            "target_slot": 1,
+            "type": "STRING"
+          },
+          {
+            "id": 218,
+            "origin_id": 77,
+            "origin_slot": 0,
+            "target_id": 112,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 215,
+            "origin_id": 112,
+            "origin_slot": 0,
+            "target_id": 91,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 560,
+            "origin_id": 38,
+            "origin_slot": 0,
+            "target_id": 269,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 76,
+            "origin_id": 41,
+            "origin_slot": 0,
+            "target_id": 43,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 217,
+            "origin_id": 91,
+            "origin_slot": 0,
+            "target_id": 48,
+            "target_slot": 0,
+            "type": "STRING",
+            "parentId": 8
+          },
+          {
+            "id": 559,
+            "origin_id": 269,
+            "origin_slot": 0,
+            "target_id": 48,
+            "target_slot": 1,
+            "type": "STRING"
+          },
+          {
+            "id": 157,
+            "origin_id": 48,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 647,
+            "origin_id": -10,
+            "origin_slot": 1,
+            "target_id": 112,
+            "target_slot": 1,
+            "type": "STRING"
+          },
+          {
+            "id": 650,
+            "origin_id": -10,
+            "origin_slot": 4,
+            "target_id": 115,
+            "target_slot": 0,
+            "type": "COMBO"
+          },
+          {
+            "id": 694,
+            "origin_id": -10,
+            "origin_slot": 2,
+            "target_id": 48,
+            "target_slot": 2,
+            "type": "BOOLEAN"
+          },
+          {
+            "id": 216,
+            "origin_id": 91,
+            "origin_slot": 0,
+            "target_id": 43,
+            "target_slot": 1,
+            "type": "STRING",
+            "parentId": 8
+          },
+          {
+            "id": 201,
+            "origin_id": -10,
+            "origin_slot": 0,
+            "target_id": 38,
+            "target_slot": 0,
+            "type": "CLIP",
+            "parentId": 9
+          },
+          {
+            "id": 77,
+            "origin_id": 43,
+            "origin_slot": 0,
+            "target_id": 38,
+            "target_slot": 4,
+            "type": "STRING"
+          },
+          {
+            "id": 674,
+            "origin_id": -10,
+            "origin_slot": 3,
+            "target_id": 38,
+            "target_slot": 5,
+            "type": "INT"
+          }
+        ],
+        "reroutes": [
+          {
+            "id": 8,
+            "pos": [
+              -1720,
+              -3726
+            ],
+            "linkIds": [
+              216,
+              217
+            ]
+          }
+        ],
+        "extra": {}
+      },
+      {
+        "id": "57323766-b03b-4305-8ac5-cb202d1492bc",
+        "version": 1,
+        "state": {
+          "lastGroupId": 15,
+          "lastNodeId": 349,
+          "lastLinkId": 910,
+          "lastRerouteId": 129
+        },
+        "revision": 0,
+        "config": {},
+        "name": "Lyrics and structure",
+        "inputNode": {
+          "id": -10,
+          "bounding": [
+            -4480,
+            -920,
+            241.189453125,
+            168
+          ]
+        },
+        "outputNode": {
+          "id": -20,
+          "bounding": [
+            -700,
+            -1220,
+            128,
+            88
+          ]
+        },
+        "inputs": [
+          {
+            "id": "851630b0-536a-405f-b07e-bab544875410",
+            "name": "values.a",
+            "type": "FLOAT,INT,BOOLEAN",
+            "linkIds": [
+              527
+            ],
+            "localized_name": "a",
+            "label": "song_duration",
+            "pos": [
+              -4262.810546875,
+              -896
+            ]
+          },
+          {
+            "id": "5089e8c7-b7be-4a4d-b5b3-28a508b7a73a",
+            "name": "clip",
+            "type": "CLIP",
+            "linkIds": [
+              75
+            ],
+            "localized_name": "clip",
+            "pos": [
+              -4262.810546875,
+              -876
+            ]
+          },
+          {
+            "id": "a755a681-56ed-473b-b7b0-e1f614af34ec",
+            "name": "replace",
+            "type": "STRING",
+            "linkIds": [
+              676
+            ],
+            "localized_name": "replace",
+            "label": "song_style",
+            "pos": [
+              -4262.810546875,
+              -856
+            ]
+          },
+          {
+            "id": "2c296977-d154-4acf-9cfb-1492723fe0e3",
+            "name": "value",
+            "type": "INT",
+            "linkIds": [
+              663
+            ],
+            "label": "Lyrics/structure enhancer seed",
+            "pos": [
+              -4262.810546875,
+              -836
+            ]
+          },
+          {
+            "id": "ee8b6af1-87c5-4f53-b1aa-e53a5db89c50",
+            "name": "value_1",
+            "type": "BOOLEAN",
+            "linkIds": [
+              695
+            ],
+            "label": "Enhance lyrics/structure with LLM",
+            "pos": [
+              -4262.810546875,
+              -816
+            ]
+          },
+          {
+            "id": "4f593233-0576-43fc-b952-1d453cfbb062",
+            "name": "replace_1",
+            "type": "STRING",
+            "linkIds": [
+              672
+            ],
+            "label": "Lyrics / structure",
+            "pos": [
+              -4262.810546875,
+              -796
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "id": "846f5da2-bc6f-4839-8267-67cea59d70f0",
+            "name": "STRING",
+            "type": "STRING",
+            "linkIds": [
+              668
+            ],
+            "localized_name": "STRING",
+            "label": "lyrics",
+            "pos": [
+              -676,
+              -1196
+            ]
+          },
+          {
+            "id": "15f0d5e6-5c05-4c6b-a1be-59848f083747",
+            "name": "STRING_1",
+            "type": "STRING",
+            "linkIds": [
+              796
+            ],
+            "label": "original_lyrics",
+            "pos": [
+              -676,
+              -1176
+            ]
+          }
+        ],
+        "widgets": [],
+        "nodes": [
+          {
+            "id": 53,
+            "type": "ComfySwitchNode",
+            "pos": [
+              -1000,
+              -720
+            ],
+            "size": [
+              240,
+              120
+            ],
+            "flags": {},
+            "order": 6,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "on_false",
+                "name": "on_false",
+                "shape": 7,
+                "type": "STRING",
+                "link": 795
+              },
+              {
+                "localized_name": "on_true",
+                "name": "on_true",
+                "shape": 7,
+                "type": "STRING",
+                "link": 794
+              },
+              {
+                "localized_name": "switch",
+                "name": "switch",
+                "type": "BOOLEAN",
+                "widget": {
+                  "name": "switch"
+                },
+                "link": 695
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "output",
+                "name": "output",
+                "type": "STRING",
+                "links": [
+                  668
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "ComfySwitchNode"
+            },
+            "widgets_values": [
+              false
+            ],
+            "widgets_values_named": {
+              "switch": false
+            }
+          },
+          {
+            "id": 65,
+            "type": "PreviewAny",
+            "pos": [
+              -3360,
+              -1540
+            ],
+            "size": [
+              220,
+              140
+            ],
+            "flags": {},
+            "order": 9,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "source",
+                "name": "source",
+                "type": "*",
+                "link": 153
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  120
+                ]
+              }
+            ],
+            "title": "Length as string",
+            "properties": {
+              "Node name for S&R": "PreviewAny"
+            },
+            "widgets_values": [],
+            "widgets_values_named": {}
+          },
+          {
+            "id": 83,
+            "type": "ComfyMathExpression",
+            "pos": [
+              -3680,
+              -1520
+            ],
+            "size": [
+              280,
+              140
+            ],
+            "flags": {},
+            "order": 10,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "a",
+                "name": "values.a",
+                "type": "FLOAT,INT,BOOLEAN",
+                "link": 527
+              },
+              {
+                "localized_name": "b",
+                "name": "values.b",
+                "shape": 7,
+                "type": "FLOAT,INT,BOOLEAN",
+                "link": null
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "FLOAT",
+                "name": "FLOAT",
+                "type": "FLOAT",
+                "links": null
+              },
+              {
+                "localized_name": "INT",
+                "name": "INT",
+                "type": "INT",
+                "links": [
+                  153,
+                  470
+                ]
+              },
+              {
+                "localized_name": "BOOL",
+                "name": "BOOL",
+                "type": "BOOLEAN",
+                "links": null
+              }
+            ],
+            "title": "duration * words per second",
+            "properties": {
+              "Node name for S&R": "ComfyMathExpression"
+            },
+            "widgets_values": [
+              "a * 0.7"
+            ],
+            "widgets_values_named": {
+              "expression": "a * 0.7"
+            }
+          },
+          {
+            "id": 218,
+            "type": "PreviewAny",
+            "pos": [
+              -3100,
+              -1300
+            ],
+            "size": [
+              220,
+              140
+            ],
+            "flags": {},
+            "order": 14,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "source",
+                "name": "source",
+                "type": "*",
+                "link": 473
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  474
+                ]
+              }
+            ],
+            "title": "Length as string",
+            "properties": {
+              "Node name for S&R": "PreviewAny"
+            },
+            "widgets_values": [],
+            "widgets_values_named": {}
+          },
+          {
+            "id": 216,
+            "type": "ComfyMathExpression",
+            "pos": [
+              -3370,
+              -1320
+            ],
+            "size": [
+              220,
+              180
+            ],
+            "flags": {},
+            "order": 12,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "a",
+                "name": "values.a",
+                "type": "FLOAT,INT,BOOLEAN",
+                "link": 470
+              },
+              {
+                "localized_name": "b",
+                "name": "values.b",
+                "shape": 7,
+                "type": "FLOAT,INT,BOOLEAN",
+                "link": 528
+              },
+              {
+                "localized_name": "c",
+                "name": "values.c",
+                "shape": 7,
+                "type": "FLOAT,INT,BOOLEAN",
+                "link": 667
+              },
+              {
+                "localized_name": "d",
+                "name": "values.d",
+                "shape": 7,
+                "type": "FLOAT,INT,BOOLEAN",
+                "link": null
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "FLOAT",
+                "name": "FLOAT",
+                "type": "FLOAT",
+                "links": null
+              },
+              {
+                "localized_name": "INT",
+                "name": "INT",
+                "type": "INT",
+                "links": [
+                  473
+                ]
+              },
+              {
+                "localized_name": "BOOL",
+                "name": "BOOL",
+                "type": "BOOLEAN",
+                "links": null
+              }
+            ],
+            "title": "sections estimate",
+            "properties": {
+              "Node name for S&R": "ComfyMathExpression"
+            },
+            "widgets_values": [
+              "min(max(round(a / b), 1), c)"
+            ],
+            "widgets_values_named": {
+              "expression": "min(max(round(a / b), 1), c)"
+            }
+          },
+          {
+            "id": 254,
+            "type": "PrimitiveInt",
+            "pos": [
+              -3680,
+              -1320
+            ],
+            "size": [
+              240,
+              100
+            ],
+            "flags": {},
+            "order": 0,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [
+              {
+                "localized_name": "INT",
+                "name": "INT",
+                "type": "INT",
+                "links": [
+                  528
+                ]
+              }
+            ],
+            "title": "Words per section",
+            "properties": {
+              "Node name for S&R": "PrimitiveInt"
+            },
+            "widgets_values": [
+              21,
+              "fixed"
+            ],
+            "widgets_values_named": {
+              "value": 21,
+              "fixed": "fixed"
+            },
+            "color": "#233",
+            "bgcolor": "#355"
+          },
+          {
+            "id": 251,
+            "type": "RegexReplace",
+            "pos": [
+              -1360,
+              -1400
+            ],
+            "size": [
+              240,
+              320
+            ],
+            "flags": {},
+            "order": 15,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "string",
+                "name": "string",
+                "type": "STRING",
+                "widget": {
+                  "name": "string"
+                },
+                "link": 558
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  794
+                ]
+              }
+            ],
+            "title": "Remove thinking",
+            "properties": {
+              "Node name for S&R": "RegexReplace"
+            },
+            "widgets_values": [
+              "",
+              "<think>[\\s\\S]*?<\\/think>\\s*",
+              "",
+              true,
+              false,
+              false,
+              0
+            ],
+            "widgets_values_named": {
+              "string": "",
+              "regex_pattern": "<think>[\\s\\S]*?<\\/think>\\s*",
+              "replace": "",
+              "case_insensitive": true,
+              "multiline": false,
+              "dotall": false,
+              "count": 0
+            }
+          },
+          {
+            "id": 268,
+            "type": "PreviewAny",
+            "pos": [
+              -1720,
+              -1400
+            ],
+            "size": [
+              320,
+              520
+            ],
+            "flags": {},
+            "order": 16,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "source",
+                "name": "source",
+                "type": "*",
+                "link": 557
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  558
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "PreviewAny"
+            },
+            "widgets_values": [],
+            "widgets_values_named": {},
+            "color": "#2a363b",
+            "bgcolor": "#3f5159"
+          },
+          {
+            "id": 255,
+            "type": "PrimitiveInt",
+            "pos": [
+              -3680,
+              -1150
+            ],
+            "size": [
+              240,
+              100
+            ],
+            "flags": {},
+            "order": 1,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [
+              {
+                "localized_name": "INT",
+                "name": "INT",
+                "type": "INT",
+                "links": [
+                  667
+                ]
+              }
+            ],
+            "title": "max sections",
+            "properties": {
+              "Node name for S&R": "PrimitiveInt"
+            },
+            "widgets_values": [
+              9,
+              "fixed"
+            ],
+            "widgets_values_named": {
+              "value": 9,
+              "fixed": "fixed"
+            },
+            "color": "#233",
+            "bgcolor": "#355"
+          },
+          {
+            "id": 39,
+            "type": "TextGenerate",
+            "pos": [
+              -2080,
+              -1400
+            ],
+            "size": [
+              300,
+              440
+            ],
+            "flags": {},
+            "order": 4,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "clip",
+                "name": "clip",
+                "type": "CLIP",
+                "link": 75
+              },
+              {
+                "localized_name": "image",
+                "name": "image",
+                "shape": 7,
+                "type": "IMAGE",
+                "link": null
+              },
+              {
+                "localized_name": "video",
+                "name": "video",
+                "shape": 7,
+                "type": "IMAGE",
+                "link": null
+              },
+              {
+                "localized_name": "audio",
+                "name": "audio",
+                "shape": 7,
+                "type": "AUDIO",
+                "link": null
+              },
+              {
+                "localized_name": "prompt",
+                "name": "prompt",
+                "type": "STRING",
+                "widget": {
+                  "name": "prompt"
+                },
+                "link": 147
+              },
+              {
+                "localized_name": "seed",
+                "name": "sampling_mode.seed",
+                "type": "INT",
+                "widget": {
+                  "name": "sampling_mode.seed"
+                },
+                "link": 728
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "generated_text",
+                "name": "generated_text",
+                "type": "STRING",
+                "links": [
+                  557
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "TextGenerate"
+            },
+            "widgets_values": [
+              "",
+              8192,
+              "on",
+              0.9,
+              64,
+              0.95,
+              0.05,
+              1,
+              1,
+              0,
+              true,
+              true,
+              "auto"
+            ],
+            "widgets_values_named": {
+              "prompt": "",
+              "max_length": 8192,
+              "sampling_mode": "on",
+              "sampling_mode.temperature": 0.9,
+              "sampling_mode.top_k": 64,
+              "sampling_mode.top_p": 0.95,
+              "sampling_mode.min_p": 0.05,
+              "sampling_mode.repetition_penalty": 1,
+              "sampling_mode.seed": 1,
+              "sampling_mode.presence_penalty": 0,
+              "thinking": true,
+              "use_default_template": true,
+              "mtp": "auto"
+            },
+            "color": "#432",
+            "bgcolor": "#653"
+          },
+          {
+            "id": 64,
+            "type": "StringReplace",
+            "pos": [
+              -2420,
+              -920
+            ],
+            "size": [
+              240,
+              280
+            ],
+            "flags": {},
+            "order": 8,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "string",
+                "name": "string",
+                "type": "STRING",
+                "widget": {
+                  "name": "string"
+                },
+                "link": 115
+              },
+              {
+                "label": "Lyrics",
+                "localized_name": "replace",
+                "name": "replace",
+                "type": "STRING",
+                "widget": {
+                  "name": "replace"
+                },
+                "link": 670
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  147
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "StringReplace"
+            },
+            "widgets_values": [
+              "",
+              "{prompt}",
+              ""
+            ],
+            "widgets_values_named": {
+              "string": "",
+              "find": "{prompt}",
+              "replace": ""
+            }
+          },
+          {
+            "id": 63,
+            "type": "StringReplace",
+            "pos": [
+              -2420,
+              -1260
+            ],
+            "size": [
+              240,
+              280
+            ],
+            "flags": {},
+            "order": 7,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "string",
+                "name": "string",
+                "type": "STRING",
+                "widget": {
+                  "name": "string"
+                },
+                "link": 472
+              },
+              {
+                "label": "Lyrics",
+                "localized_name": "replace",
+                "name": "replace",
+                "type": "STRING",
+                "widget": {
+                  "name": "replace"
+                },
+                "link": 675
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  115
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "StringReplace"
+            },
+            "widgets_values": [
+              "",
+              "{description}",
+              ""
+            ],
+            "widgets_values_named": {
+              "string": "",
+              "find": "{description}",
+              "replace": ""
+            }
+          },
+          {
+            "id": 44,
+            "type": "StringReplace",
+            "pos": [
+              -2420,
+              -1960
+            ],
+            "size": [
+              240,
+              280
+            ],
+            "flags": {},
+            "order": 5,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "string",
+                "name": "string",
+                "type": "STRING",
+                "widget": {
+                  "name": "string"
+                },
+                "link": 78
+              },
+              {
+                "label": "Lyrics",
+                "localized_name": "replace",
+                "name": "replace",
+                "type": "STRING",
+                "widget": {
+                  "name": "replace"
+                },
+                "link": 120
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  471
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "StringReplace"
+            },
+            "widgets_values": [
+              "",
+              "{length}",
+              ""
+            ],
+            "widgets_values_named": {
+              "string": "",
+              "find": "{length}",
+              "replace": ""
+            }
+          },
+          {
+            "id": 217,
+            "type": "StringReplace",
+            "pos": [
+              -2420,
+              -1600
+            ],
+            "size": [
+              240,
+              280
+            ],
+            "flags": {},
+            "order": 13,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "string",
+                "name": "string",
+                "type": "STRING",
+                "widget": {
+                  "name": "string"
+                },
+                "link": 471
+              },
+              {
+                "label": "Lyrics",
+                "localized_name": "replace",
+                "name": "replace",
+                "type": "STRING",
+                "widget": {
+                  "name": "replace"
+                },
+                "link": 474
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  472
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "StringReplace"
+            },
+            "widgets_values": [
+              "",
+              "{sections}",
+              ""
+            ],
+            "widgets_values_named": {
+              "string": "",
+              "find": "{sections}",
+              "replace": ""
+            }
+          },
+          {
+            "id": 42,
+            "type": "PrimitiveStringMultiline",
+            "pos": [
+              -2900,
+              -1940
+            ],
+            "size": [
+              420,
+              340
+            ],
+            "flags": {},
+            "order": 2,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  78
+                ]
+              }
+            ],
+            "title": "System Prompt",
+            "properties": {
+              "Node name for S&R": "PrimitiveStringMultiline"
+            },
+            "widgets_values": [
+              "You write song lyrics for an AI music generator. Output ONLY the lyrics: section tags and their content. No title, no plan, no explanations.\n\nInputs:\n- Style: the sound of the song. Use it for language, genre, mood and energy.\n- Request: free text from the user. Use it for the topic, structure, and any lyrics they supplied. It may repeat style words (genre, instruments, vocals); those are already covered by Style, so do not write lyrics about them unless the user clearly wants that as the topic.\n- Sections: the number of sections in the song.\n- Length: the size of the song.\n\nBefore writing (in your thinking):\n1. Decide if the song is vocal or instrumental.\n2. Check the request for structure instructions.\n3. List the numbered sections. The count must match Sections, unless the request sets an exact sequence.\n4. For vocal songs, share the word budget across the sung sections. Count only the words sung inside sections; do not count section tags, performance notes, or parenthetical directions.\n5. After drafting, count the sung words the same way. If you are well under the budget, add lines. If you are over, trim. Aim to land near the budget, not far below it.\n6. Read each rhyming pair aloud in your head. If one line is much longer than its rhyme partner, reword one so their lengths are closer.\n\nPriority:\n- Structure requests in Request override Sections and the default structure rules.\n- If the request lists an exact sequence of sections, use that sequence as written, even if its count differs from Sections.\n- If the request only limits which tags may be used (e.g. \"only chorus and instrumental\"), use only those tags and still write the number of sections given.\n\nStructure:\n- Put each section tag alone on its own line, followed by its content, then one blank line.\n- Common tags: [Intro], [Verse], [Pre-Chorus], [Chorus], [Post-Chorus], [Hook], [Build-Up], [Drop], [Break], [Bridge], [Interlude], [Instrumental], [Solo], [Outro]. You may use other short tags when they fit, such as [Guitar Solo] or [Spoken Word].\n- Choose a structure that suits the genre. For example, electronic music may use [Build-Up] and [Drop]; rock may use [Solo].\n- With few sections, prefer [Verse] and [Chorus] over [Intro], [Outro] or extra parts.\n- Do not number the section tags.\n\nStructure examples:\n- 2 sections: [Verse], [Chorus]\n- 5 sections: [Verse], [Chorus], [Verse], [Chorus], [Outro]\n- 7 sections: [Intro], [Verse], [Chorus], [Verse], [Chorus], [Bridge], [Chorus]\n- 8 sections: [Intro], [Verse], [Pre-Chorus], [Chorus], [Verse], [Chorus], [Solo], [Outro]\n- 5 sections, request \"only chorus and instrumental\": [Instrumental], [Chorus], [Instrumental], [Chorus], [Instrumental]\n- 6 sections, request \"intro, chorus, outro\": [Intro], [Chorus], [Outro]\n\nVocal songs:\n- Length is the sung-word budget. Aim close to it and do not exceed it by much. Section tags and sections without words do not count. Repeated choruses do count.\n- Sections without singing (like [Instrumental] or [Solo]) have a tag only, with no lines under it.\n- Performance notes go inside the tag, e.g. [Verse - soft, piano only].\n- Parentheses are only for sung backing vocals or ad-libs, e.g. (oh-oh) or (hold on).\n- Write every repeated chorus out in full. Never write \"repeat chorus\".\n- Verses tell the story with concrete images. The chorus states the main idea with a short hook line that repeats.\n- Keep rhyming lines close in length so they sing well together, roughly the same number of syllables. Vary line length between different parts (a verse line and a chorus line need not match), but keep it even within a rhyme group.\n- Fit line length to the tempo in the style: shorter lines for fast songs, longer lines for slow ones.\n- Keep lines short and singable. Rhyme the line endings.\n- Write in the language named in the style. If none is named, use English.\n- If the request already contains lyrics, keep their words and only add or fix section tags.\n- If the request gives no topic, choose one that fits the style.\n\nInstrumental songs (the style contains \"instrumental\"):\n- Write no sung words at all. Ignore Length.\n- Under each section tag, write one line in parentheses describing what plays: instruments entering or leaving, energy, mood.\n- Make each section different, building and releasing energy across the song.\n\nExample (vocal):\nStyle: English, heartland rock, warm male vocal, steady 104 BPM, twangy electric guitar\nRequest: a sad song about driving home, electric guitar, include a guitar solo section.\nSections: up to 4 (unless the request sets the structure)\nLength: about 55 sung words\nOutput:\n[Verse]\nDust on the dashboard, sun in my eyes\nFifty more miles to the county line\n\n[Chorus]\nKeep the porch light on (keep it on)\nI'm almost home\nKeep the porch light on\nI'm almost home\n\n[Guitar Solo]\n\n[Chorus]\nKeep the porch light on (keep it on)\nI'm almost home\nKeep the porch light on\nI'm almost home\n\nExample (instrumental):\nStyle: Celtic folk, instrumental, no vocals, lively 110 BPM, tin whistle, bodhrán\nRequest: a morning in the highlands\nSections: up to 3 (unless the request sets the structure)\nLength: about 30 sung words\nOutput:\n[Intro]\n(solo tin whistle, misty and slow)\n\n[Instrumental]\n(bodhrán and acoustic guitar enter, lively dance rhythm)\n\n[Outro]\n(tin whistle alone again, fading into silence)\n\nStyle: {description}\nRequest: {prompt}\nSections: up to {sections} (unless the request sets the structure)\nLength: about {length} sung words\nOutput:"
+            ],
+            "widgets_values_named": {
+              "value": "You write song lyrics for an AI music generator. Output ONLY the lyrics: section tags and their content. No title, no plan, no explanations.\n\nInputs:\n- Style: the sound of the song. Use it for language, genre, mood and energy.\n- Request: free text from the user. Use it for the topic, structure, and any lyrics they supplied. It may repeat style words (genre, instruments, vocals); those are already covered by Style, so do not write lyrics about them unless the user clearly wants that as the topic.\n- Sections: the number of sections in the song.\n- Length: the size of the song.\n\nBefore writing (in your thinking):\n1. Decide if the song is vocal or instrumental.\n2. Check the request for structure instructions.\n3. List the numbered sections. The count must match Sections, unless the request sets an exact sequence.\n4. For vocal songs, share the word budget across the sung sections. Count only the words sung inside sections; do not count section tags, performance notes, or parenthetical directions.\n5. After drafting, count the sung words the same way. If you are well under the budget, add lines. If you are over, trim. Aim to land near the budget, not far below it.\n6. Read each rhyming pair aloud in your head. If one line is much longer than its rhyme partner, reword one so their lengths are closer.\n\nPriority:\n- Structure requests in Request override Sections and the default structure rules.\n- If the request lists an exact sequence of sections, use that sequence as written, even if its count differs from Sections.\n- If the request only limits which tags may be used (e.g. \"only chorus and instrumental\"), use only those tags and still write the number of sections given.\n\nStructure:\n- Put each section tag alone on its own line, followed by its content, then one blank line.\n- Common tags: [Intro], [Verse], [Pre-Chorus], [Chorus], [Post-Chorus], [Hook], [Build-Up], [Drop], [Break], [Bridge], [Interlude], [Instrumental], [Solo], [Outro]. You may use other short tags when they fit, such as [Guitar Solo] or [Spoken Word].\n- Choose a structure that suits the genre. For example, electronic music may use [Build-Up] and [Drop]; rock may use [Solo].\n- With few sections, prefer [Verse] and [Chorus] over [Intro], [Outro] or extra parts.\n- Do not number the section tags.\n\nStructure examples:\n- 2 sections: [Verse], [Chorus]\n- 5 sections: [Verse], [Chorus], [Verse], [Chorus], [Outro]\n- 7 sections: [Intro], [Verse], [Chorus], [Verse], [Chorus], [Bridge], [Chorus]\n- 8 sections: [Intro], [Verse], [Pre-Chorus], [Chorus], [Verse], [Chorus], [Solo], [Outro]\n- 5 sections, request \"only chorus and instrumental\": [Instrumental], [Chorus], [Instrumental], [Chorus], [Instrumental]\n- 6 sections, request \"intro, chorus, outro\": [Intro], [Chorus], [Outro]\n\nVocal songs:\n- Length is the sung-word budget. Aim close to it and do not exceed it by much. Section tags and sections without words do not count. Repeated choruses do count.\n- Sections without singing (like [Instrumental] or [Solo]) have a tag only, with no lines under it.\n- Performance notes go inside the tag, e.g. [Verse - soft, piano only].\n- Parentheses are only for sung backing vocals or ad-libs, e.g. (oh-oh) or (hold on).\n- Write every repeated chorus out in full. Never write \"repeat chorus\".\n- Verses tell the story with concrete images. The chorus states the main idea with a short hook line that repeats.\n- Keep rhyming lines close in length so they sing well together, roughly the same number of syllables. Vary line length between different parts (a verse line and a chorus line need not match), but keep it even within a rhyme group.\n- Fit line length to the tempo in the style: shorter lines for fast songs, longer lines for slow ones.\n- Keep lines short and singable. Rhyme the line endings.\n- Write in the language named in the style. If none is named, use English.\n- If the request already contains lyrics, keep their words and only add or fix section tags.\n- If the request gives no topic, choose one that fits the style.\n\nInstrumental songs (the style contains \"instrumental\"):\n- Write no sung words at all. Ignore Length.\n- Under each section tag, write one line in parentheses describing what plays: instruments entering or leaving, energy, mood.\n- Make each section different, building and releasing energy across the song.\n\nExample (vocal):\nStyle: English, heartland rock, warm male vocal, steady 104 BPM, twangy electric guitar\nRequest: a sad song about driving home, electric guitar, include a guitar solo section.\nSections: up to 4 (unless the request sets the structure)\nLength: about 55 sung words\nOutput:\n[Verse]\nDust on the dashboard, sun in my eyes\nFifty more miles to the county line\n\n[Chorus]\nKeep the porch light on (keep it on)\nI'm almost home\nKeep the porch light on\nI'm almost home\n\n[Guitar Solo]\n\n[Chorus]\nKeep the porch light on (keep it on)\nI'm almost home\nKeep the porch light on\nI'm almost home\n\nExample (instrumental):\nStyle: Celtic folk, instrumental, no vocals, lively 110 BPM, tin whistle, bodhrán\nRequest: a morning in the highlands\nSections: up to 3 (unless the request sets the structure)\nLength: about 30 sung words\nOutput:\n[Intro]\n(solo tin whistle, misty and slow)\n\n[Instrumental]\n(bodhrán and acoustic guitar enter, lively dance rhythm)\n\n[Outro]\n(tin whistle alone again, fading into silence)\n\nStyle: {description}\nRequest: {prompt}\nSections: up to {sections} (unless the request sets the structure)\nLength: about {length} sung words\nOutput:"
+            },
+            "color": "#233",
+            "bgcolor": "#355"
+          },
+          {
+            "id": 90,
+            "type": "PrimitiveInt",
+            "pos": [
+              -2480,
+              -580
+            ],
+            "size": [
+              300,
+              100
+            ],
+            "flags": {},
+            "order": 11,
+            "mode": 0,
+            "inputs": [
+              {
+                "label": "Lyrics/structure enhancer seed",
+                "localized_name": "value",
+                "name": "value",
+                "type": "INT",
+                "widget": {
+                  "name": "value"
+                },
+                "link": 663
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "INT",
+                "name": "INT",
+                "type": "INT",
+                "links": [
+                  728
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "PrimitiveInt"
+            },
+            "widgets_values": [
+              166,
+              "increment"
+            ],
+            "widgets_values_named": {
+              "value": 166,
+              "fixed": "increment"
+            },
+            "color": "#233",
+            "bgcolor": "#355"
+          },
+          {
+            "id": 292,
+            "type": "PrimitiveStringMultiline",
+            "pos": [
+              -2980,
+              -740
+            ],
+            "size": [
+              220,
+              100
+            ],
+            "flags": {},
+            "order": 17,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "value",
+                "name": "value",
+                "type": "STRING",
+                "widget": {
+                  "name": "value"
+                },
+                "link": 672
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  670,
+                  795,
+                  796
+                ]
+              }
+            ],
+            "title": "lyrics",
+            "properties": {
+              "Node name for S&R": "PrimitiveStringMultiline"
+            },
+            "widgets_values": [
+              ""
+            ],
+            "widgets_values_named": {
+              "value": ""
+            },
+            "color": "#233",
+            "bgcolor": "#355"
+          },
+          {
+            "id": 294,
+            "type": "PrimitiveStringMultiline",
+            "pos": [
+              -2980,
+              -900
+            ],
+            "size": [
+              220,
+              100
+            ],
+            "flags": {},
+            "order": 18,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "value",
+                "name": "value",
+                "type": "STRING",
+                "widget": {
+                  "name": "value"
+                },
+                "link": 676
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "STRING",
+                "name": "STRING",
+                "type": "STRING",
+                "links": [
+                  675
+                ]
+              }
+            ],
+            "title": "style",
+            "properties": {
+              "Node name for S&R": "PrimitiveStringMultiline"
+            },
+            "widgets_values": [
+              ""
+            ],
+            "widgets_values_named": {
+              "value": ""
+            },
+            "color": "#233",
+            "bgcolor": "#355"
+          },
+          {
+            "id": 349,
+            "type": "Note",
+            "pos": [
+              -3680,
+              -1700
+            ],
+            "size": [
+              540,
+              90
+            ],
+            "flags": {},
+            "order": 3,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [],
+            "properties": {},
+            "widgets_values": [
+              "The numbers below help guide small LLMs to produce lyrics that fit the music duration."
+            ],
+            "widgets_values_named": {
+              "text": "The numbers below help guide small LLMs to produce lyrics that fit the music duration."
+            },
+            "color": "#222",
+            "bgcolor": "#000"
+          }
+        ],
+        "groups": [],
+        "links": [
+          {
+            "id": 153,
+            "origin_id": 83,
+            "origin_slot": 1,
+            "target_id": 65,
+            "target_slot": 0,
+            "type": "INT"
+          },
+          {
+            "id": 473,
+            "origin_id": 216,
+            "origin_slot": 1,
+            "target_id": 218,
+            "target_slot": 0,
+            "type": "INT"
+          },
+          {
+            "id": 558,
+            "origin_id": 268,
+            "origin_slot": 0,
+            "target_id": 251,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 557,
+            "origin_id": 39,
+            "origin_slot": 0,
+            "target_id": 268,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 115,
+            "origin_id": 63,
+            "origin_slot": 0,
+            "target_id": 64,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 472,
+            "origin_id": 217,
+            "origin_slot": 0,
+            "target_id": 63,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 78,
+            "origin_id": 42,
+            "origin_slot": 0,
+            "target_id": 44,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 471,
+            "origin_id": 44,
+            "origin_slot": 0,
+            "target_id": 217,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 668,
+            "origin_id": 53,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 663,
+            "origin_id": -10,
+            "origin_slot": 3,
+            "target_id": 90,
+            "target_slot": 0,
+            "type": "INT"
+          },
+          {
+            "id": 672,
+            "origin_id": -10,
+            "origin_slot": 5,
+            "target_id": 292,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 676,
+            "origin_id": -10,
+            "origin_slot": 2,
+            "target_id": 294,
+            "target_slot": 0,
+            "type": "STRING"
+          },
+          {
+            "id": 695,
+            "origin_id": -10,
+            "origin_slot": 4,
+            "target_id": 53,
+            "target_slot": 2,
+            "type": "BOOLEAN",
+            "parentId": 58
+          },
+          {
+            "id": 794,
+            "origin_id": 251,
+            "origin_slot": 0,
+            "target_id": 53,
+            "target_slot": 1,
+            "type": "STRING"
+          },
+          {
+            "id": 795,
+            "origin_id": 292,
+            "origin_slot": 0,
+            "target_id": 53,
+            "target_slot": 0,
+            "type": "STRING",
+            "parentId": 56
+          },
+          {
+            "id": 796,
+            "origin_id": 292,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 1,
+            "type": "STRING",
+            "parentId": 56
+          },
+          {
+            "id": 670,
+            "origin_id": 292,
+            "origin_slot": 0,
+            "target_id": 64,
+            "target_slot": 1,
+            "type": "STRING",
+            "parentId": 15
+          },
+          {
+            "id": 675,
+            "origin_id": 294,
+            "origin_slot": 0,
+            "target_id": 63,
+            "target_slot": 1,
+            "type": "STRING"
+          },
+          {
+            "id": 120,
+            "origin_id": 65,
+            "origin_slot": 0,
+            "target_id": 44,
+            "target_slot": 1,
+            "type": "STRING"
+          },
+          {
+            "id": 474,
+            "origin_id": 218,
+            "origin_slot": 0,
+            "target_id": 217,
+            "target_slot": 1,
+            "type": "STRING"
+          },
+          {
+            "id": 527,
+            "origin_id": -10,
+            "origin_slot": 0,
+            "target_id": 83,
+            "target_slot": 0,
+            "type": "FLOAT",
+            "parentId": 16
+          },
+          {
+            "id": 75,
+            "origin_id": -10,
+            "origin_slot": 1,
+            "target_id": 39,
+            "target_slot": 0,
+            "type": "CLIP",
+            "parentId": 9
+          },
+          {
+            "id": 147,
+            "origin_id": 64,
+            "origin_slot": 0,
+            "target_id": 39,
+            "target_slot": 4,
+            "type": "STRING"
+          },
+          {
+            "id": 470,
+            "origin_id": 83,
+            "origin_slot": 1,
+            "target_id": 216,
+            "target_slot": 0,
+            "type": "INT"
+          },
+          {
+            "id": 528,
+            "origin_id": 254,
+            "origin_slot": 0,
+            "target_id": 216,
+            "target_slot": 1,
+            "type": "INT"
+          },
+          {
+            "id": 667,
+            "origin_id": 255,
+            "origin_slot": 0,
+            "target_id": 216,
+            "target_slot": 2,
+            "type": "INT"
+          },
+          {
+            "id": 728,
+            "origin_id": 90,
+            "origin_slot": 0,
+            "target_id": 39,
+            "target_slot": 5,
+            "type": "INT"
+          }
+        ],
+        "reroutes": [
+          {
+            "id": 15,
+            "pos": [
+              -2660,
+              -346
+            ],
+            "linkIds": [
+              670,
+              795,
+              796
+            ]
+          },
+          {
+            "id": 56,
+            "parentId": 15,
+            "pos": [
+              -1040,
+              -326
+            ],
+            "linkIds": [
+              795,
+              796
+            ]
+          },
+          {
+            "id": 57,
+            "pos": [
+              -4140,
+              -266
+            ],
+            "linkIds": [
+              695
+            ]
+          },
+          {
+            "id": 58,
+            "parentId": 57,
+            "pos": [
+              -1000,
+              -206
+            ],
+            "linkIds": [
+              695
+            ]
+          }
+        ],
+        "extra": {}
+      }
+    ]
+  },
+  "config": {},
+  "extra": {
+    "frontendVersion": "1.53.6",
+    "reroutes": [
+      {
+        "id": 3,
+        "parentId": 97,
+        "pos": [
+          -1150,
+          -1386
+        ],
+        "linkIds": [
+          880,
+          896,
+          898
+        ]
+      },
+      {
+        "id": 9,
+        "pos": [
+          -2160,
+          -2036
+        ],
+        "linkIds": [
+          643,
+          656
+        ]
+      },
+      {
+        "id": 16,
+        "pos": [
+          -770,
+          -716
+        ],
+        "linkIds": [
+          907,
+          909
+        ]
+      },
+      {
+        "id": 18,
+        "pos": [
+          2150,
+          -186
+        ],
+        "linkIds": [
+          55
+        ]
+      },
+      {
+        "id": 22,
+        "parentId": 107,
+        "pos": [
+          220,
+          -1156
+        ],
+        "linkIds": [
+          680,
+          681
+        ]
+      },
+      {
+        "id": 24,
+        "pos": [
+          -3270,
+          -806
+        ],
+        "linkIds": [
+          358
+        ]
+      },
+      {
+        "id": 53,
+        "parentId": 71,
+        "pos": [
+          -3300,
+          314
+        ],
+        "linkIds": [
+          602
+        ]
+      },
+      {
+        "id": 54,
+        "parentId": 53,
+        "pos": [
+          3380,
+          314
+        ],
+        "linkIds": [
+          602
+        ]
+      },
+      {
+        "id": 55,
+        "parentId": 54,
+        "pos": [
+          3380,
+          -846
+        ],
+        "linkIds": [
+          602
+        ]
+      },
+      {
+        "id": 62,
+        "parentId": 109,
+        "pos": [
+          3770,
+          -1266
+        ],
+        "linkIds": [
+          878
+        ]
+      },
+      {
+        "id": 71,
+        "pos": [
+          -3300,
+          -786
+        ],
+        "linkIds": [
+          602
+        ]
+      },
+      {
+        "id": 72,
+        "pos": [
+          -3300,
+          -826
+        ],
+        "linkIds": [
+          900
+        ]
+      },
+      {
+        "id": 73,
+        "parentId": 72,
+        "pos": [
+          -3300,
+          -1006
+        ],
+        "linkIds": [
+          900
+        ]
+      },
+      {
+        "id": 80,
+        "parentId": 105,
+        "pos": [
+          730,
+          -1386
+        ],
+        "linkIds": [
+          880,
+          898
+        ]
+      },
+      {
+        "id": 81,
+        "pos": [
+          -1390,
+          -426
+        ],
+        "linkIds": [
+          885,
+          889
+        ]
+      },
+      {
+        "id": 87,
+        "parentId": 92,
+        "pos": [
+          -2090,
+          -796
+        ],
+        "linkIds": [
+          165
+        ]
+      },
+      {
+        "id": 88,
+        "parentId": 9,
+        "pos": [
+          -850,
+          -2036
+        ],
+        "linkIds": [
+          656
+        ]
+      },
+      {
+        "id": 89,
+        "parentId": 9,
+        "pos": [
+          -2160,
+          -1916
+        ],
+        "linkIds": [
+          643
+        ]
+      },
+      {
+        "id": 90,
+        "parentId": 88,
+        "pos": [
+          -850,
+          -1876
+        ],
+        "linkIds": [
+          656
+        ]
+      },
+      {
+        "id": 92,
+        "pos": [
+          -2090,
+          -566
+        ],
+        "linkIds": [
+          165,
+          891,
+          892
+        ]
+      },
+      {
+        "id": 93,
+        "parentId": 16,
+        "pos": [
+          -770,
+          -1896
+        ],
+        "linkIds": [
+          907
+        ]
+      },
+      {
+        "id": 94,
+        "parentId": 24,
+        "pos": [
+          -3270,
+          -986
+        ],
+        "linkIds": [
+          358
+        ]
+      },
+      {
+        "id": 95,
+        "parentId": 92,
+        "pos": [
+          -2090,
+          -366
+        ],
+        "linkIds": [
+          891
+        ]
+      },
+      {
+        "id": 96,
+        "pos": [
+          -1150,
+          -1916
+        ],
+        "linkIds": [
+          880,
+          894,
+          896,
+          898
+        ]
+      },
+      {
+        "id": 97,
+        "parentId": 96,
+        "pos": [
+          -1150,
+          -1856
+        ],
+        "linkIds": [
+          880,
+          894,
+          896,
+          898
+        ]
+      },
+      {
+        "id": 98,
+        "pos": [
+          220,
+          -1896
+        ],
+        "linkIds": [
+          680,
+          681,
+          897
+        ]
+      },
+      {
+        "id": 100,
+        "pos": [
+          760,
+          -406
+        ],
+        "linkIds": [
+          886
+        ]
+      },
+      {
+        "id": 101,
+        "parentId": 22,
+        "pos": [
+          220,
+          -896
+        ],
+        "linkIds": [
+          680
+        ]
+      },
+      {
+        "id": 103,
+        "parentId": 104,
+        "pos": [
+          280,
+          -1036
+        ],
+        "linkIds": [
+          372
+        ]
+      },
+      {
+        "id": 104,
+        "pos": [
+          280,
+          -976
+        ],
+        "linkIds": [
+          372,
+          895
+        ]
+      },
+      {
+        "id": 105,
+        "parentId": 3,
+        "pos": [
+          150,
+          -1386
+        ],
+        "linkIds": [
+          880,
+          896,
+          898
+        ]
+      },
+      {
+        "id": 106,
+        "parentId": 105,
+        "pos": [
+          150,
+          -956
+        ],
+        "linkIds": [
+          896
+        ]
+      },
+      {
+        "id": 107,
+        "parentId": 98,
+        "pos": [
+          220,
+          -1626
+        ],
+        "linkIds": [
+          680,
+          681,
+          897
+        ]
+      },
+      {
+        "id": 108,
+        "parentId": 80,
+        "pos": [
+          730,
+          -1696
+        ],
+        "linkIds": [
+          880
+        ]
+      },
+      {
+        "id": 109,
+        "parentId": 127,
+        "pos": [
+          1030,
+          -1266
+        ],
+        "linkIds": [
+          878
+        ]
+      },
+      {
+        "id": 110,
+        "parentId": 103,
+        "pos": [
+          2150,
+          -1036
+        ],
+        "linkIds": [
+          372
+        ]
+      },
+      {
+        "id": 111,
+        "parentId": 110,
+        "pos": [
+          2150,
+          -846
+        ],
+        "linkIds": [
+          372
+        ]
+      },
+      {
+        "id": 112,
+        "pos": [
+          250,
+          -996
+        ],
+        "linkIds": [
+          902
+        ]
+      },
+      {
+        "id": 113,
+        "parentId": 112,
+        "pos": [
+          250,
+          -1066
+        ],
+        "linkIds": [
+          902
+        ]
+      },
+      {
+        "id": 114,
+        "parentId": 129,
+        "pos": [
+          2990,
+          -866
+        ],
+        "linkIds": [
+          903
+        ]
+      },
+      {
+        "id": 116,
+        "parentId": 18,
+        "pos": [
+          2150,
+          -686
+        ],
+        "linkIds": [
+          55
+        ]
+      },
+      {
+        "id": 117,
+        "parentId": 118,
+        "pos": [
+          2117.1274200744347,
+          -554.5109237312429
+        ],
+        "linkIds": [
+          910
+        ]
+      },
+      {
+        "id": 118,
+        "parentId": 120,
+        "pos": [
+          2120,
+          -606
+        ],
+        "linkIds": [
+          910
+        ]
+      },
+      {
+        "id": 119,
+        "pos": [
+          -10,
+          -716
+        ],
+        "linkIds": [
+          910
+        ]
+      },
+      {
+        "id": 120,
+        "parentId": 119,
+        "pos": [
+          -10,
+          -606
+        ],
+        "linkIds": [
+          910
+        ]
+      },
+      {
+        "id": 121,
+        "parentId": 124,
+        "pos": [
+          2120,
+          -806
+        ],
+        "linkIds": [
+          898
+        ]
+      },
+      {
+        "id": 123,
+        "parentId": 80,
+        "pos": [
+          730,
+          -1216
+        ],
+        "linkIds": [
+          898
+        ]
+      },
+      {
+        "id": 124,
+        "parentId": 123,
+        "pos": [
+          2120,
+          -1216
+        ],
+        "linkIds": [
+          898
+        ]
+      },
+      {
+        "id": 125,
+        "parentId": 126,
+        "pos": [
+          2060,
+          -746
+        ],
+        "linkIds": [
+          681
+        ]
+      },
+      {
+        "id": 126,
+        "parentId": 22,
+        "pos": [
+          2060,
+          -1156
+        ],
+        "linkIds": [
+          681
+        ]
+      },
+      {
+        "id": 127,
+        "pos": [
+          1030,
+          -1466
+        ],
+        "linkIds": [
+          878,
+          899
+        ]
+      },
+      {
+        "id": 128,
+        "parentId": 62,
+        "pos": [
+          3770,
+          -846
+        ],
+        "linkIds": [
+          878
+        ]
+      },
+      {
+        "id": 129,
+        "pos": [
+          2990,
+          -1066
+        ],
+        "linkIds": [
+          903
+        ]
+      }
+    ],
+    "linearMode": true,
+    "linearData": {
+      "inputs": [
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:287:choice",
+          "choice",
+          {
+            "description": "Prefix your prompt with a style preset."
+          }
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:287:value",
+          "value",
+          {
+            "description": "Describe the style, instruments, mood, quality, vocals, etc."
+          }
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:287:value_1",
+          "value_1",
+          {}
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:290:replace_1",
+          "replace_1",
+          {
+            "description": "Describe the lyrics and the song structure."
+          }
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:290:value_1",
+          "value_1"
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:62:value",
+          "value",
+          {
+            "description": "Recommended: 60s - 600s"
+          }
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:305:value",
+          "value",
+          {
+            "description": "BPM (beats per minute). 0 means auto."
+          }
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:293:value",
+          "value",
+          {
+            "description": "Change it to vary the AI-generated style."
+          }
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:295:value",
+          "value",
+          {
+            "description": "Change it to vary the AI-generated lyrics."
+          }
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:154:value",
+          "value",
+          {
+            "description": "Change it to vary ABC score composition."
+          }
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:155:value",
+          "value",
+          {
+            "description": "Change it to vary song slightly (conditioning)."
+          }
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:164:strength_model",
+          "strength_model",
+          {
+            "description": "0.6 - 1.2 to improve realism with LoRA (0 = default)."
+          }
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:166:value",
+          "value",
+          {
+            "description": "0.6 - 1.0 to improve instruments with LoRA (0 = default)."
+          }
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:348:audio",
+          "audio",
+          {
+            "description": "Audio to be used if \"Cover duration\" is > 0."
+          }
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:283:start_index",
+          "start_index",
+          {
+            "description": "Trim the beginning (seconds)."
+          }
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:283:duration",
+          "duration",
+          {
+            "description": "If > 0, cover audio be used as a reference."
+          }
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:82:value",
+          "value",
+          {
+            "description": "\"full\" = plan melody and harmony, \"melody\" = plan only melody."
+          }
+        ],
+        [
+          "60dc7da0-449e-4fe5-9e10-b3c6ea4ddb97:37:clip_name",
+          "clip_name",
+          {
+            "description": "The LLM to auto-generate style, lyrics, title, art, etc."
+          }
+        ]
+      ],
+      "outputs": [
+        "10",
+        "58"
+      ]
+    },
+    "ds": {
+      "scale": 0.5559917313492866,
+      "offset": [
+        -888.5566407693868,
+        1838.9001581631335
+      ]
+    },
+    "linkExtensions": [
+      {
+        "id": 55,
+        "parentId": 116
+      },
+      {
+        "id": 165,
+        "parentId": 87
+      },
+      {
+        "id": 358,
+        "parentId": 94
+      },
+      {
+        "id": 372,
+        "parentId": 111
+      },
+      {
+        "id": 602,
+        "parentId": 55
+      },
+      {
+        "id": 643,
+        "parentId": 89
+      },
+      {
+        "id": 656,
+        "parentId": 90
+      },
+      {
+        "id": 680,
+        "parentId": 101
+      },
+      {
+        "id": 681,
+        "parentId": 125
+      },
+      {
+        "id": 880,
+        "parentId": 108
+      },
+      {
+        "id": 885,
+        "parentId": 81
+      },
+      {
+        "id": 886,
+        "parentId": 100
+      },
+      {
+        "id": 889,
+        "parentId": 81
+      },
+      {
+        "id": 892,
+        "parentId": 92
+      },
+      {
+        "id": 894,
+        "parentId": 97
+      },
+      {
+        "id": 895,
+        "parentId": 104
+      },
+      {
+        "id": 896,
+        "parentId": 106
+      },
+      {
+        "id": 897,
+        "parentId": 107
+      },
+      {
+        "id": 898,
+        "parentId": 121
+      },
+      {
+        "id": 899,
+        "parentId": 127
+      },
+      {
+        "id": 900,
+        "parentId": 73
+      },
+      {
+        "id": 902,
+        "parentId": 113
+      },
+      {
+        "id": 903,
+        "parentId": 114
+      },
+      {
+        "id": 891,
+        "parentId": 95
+      },
+      {
+        "id": 907,
+        "parentId": 93
+      },
+      {
+        "id": 910,
+        "parentId": 117
+      },
+      {
+        "id": 878,
+        "parentId": 128
+      },
+      {
+        "id": 909,
+        "parentId": 16
+      }
+    ]
+  },
+  "version": 0.4
+}
